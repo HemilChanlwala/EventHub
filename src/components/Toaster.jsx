@@ -18,7 +18,7 @@ export default function Toaster() {
   return (
     <div className="fixed right-4 top-4 z-50 space-y-2" role="status" aria-live="polite" aria-atomic="true">
       {toasts.map(t => (
-        <div key={t.id} className={`p-3 rounded shadow-lg text-sm ${t.type === 'error' ? 'bg-red-600 text-white' : 'bg-white/5 text-white'}`}>
+        <div key={t.id} className={`p-3 rounded shadow-lg text-sm ${t.type === 'error' ? 'bg-red-600 text-white' : 'bg-white/5 text-theme'}`}>
           {t.message}
         </div>
       ))}

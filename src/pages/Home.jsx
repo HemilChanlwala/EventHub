@@ -29,11 +29,11 @@ const Home = () => {
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-8 px-4 py-12">
           <div className="text-left">
-            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">Discover Amazing Events Near You</h1>
-            <p className="mt-4 text-lg md:text-xl text-indigo-100">Find workshops, seminars, concerts and conferences.</p>
+            <h1 className="text-4xl md:text-6xl font-bold text-theme leading-tight">Discover Amazing Events Near You</h1>
+            <p className="mt-4 text-lg md:text-xl text-theme-weak">Find workshops, seminars, concerts and conferences.</p>
             <div className="mt-8 flex gap-4">
               <Link to="/events"><button className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded font-semibold shadow-glow">Explore Events</button></Link>
-              <button className="px-6 py-3 border border-white/10 rounded text-white/90">Create Event</button>
+              <button className="px-6 py-3 border border-theme rounded text-theme-weak">Create Event</button>
             </div>
           </div>
 
@@ -49,7 +49,7 @@ const Home = () => {
         <h2 className="text-2xl font-semibold mb-4">Categories</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {categories.map(c => (
-            <div key={c} className="glass p-4 rounded-lg text-center text-white/90 neon-hover">{c}</div>
+            <div key={c} className="glass p-4 rounded-lg text-center text-theme-weak neon-hover">{c}</div>
           ))}
         </div>
       </section>
@@ -77,13 +77,13 @@ const Home = () => {
           {testimonials.map(t => (
             <div key={t.id} className="glass p-4 rounded shadow-sm text-left">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/8 rounded-full flex items-center justify-center text-white">{t.name.split(' ').map(n=>n[0]).slice(0,2).join('')}</div>
+                <div className="w-12 h-12 bg-white/8 rounded-full flex items-center justify-center text-theme">{t.name.split(' ').map(n=>n[0]).slice(0,2).join('')}</div>
                 <div>
-                  <div className="font-semibold text-white">{t.name}</div>
+                  <div className="font-semibold text-theme">{t.name}</div>
                   <div className="text-sm text-yellow-400">{'★'.repeat(t.rating)}</div>
                 </div>
               </div>
-              <p className="mt-3 text-sm text-indigo-100">{t.review}</p>
+              <p className="mt-3 text-sm text-theme-weak">{t.review}</p>
             </div>
           ))}
         </div>

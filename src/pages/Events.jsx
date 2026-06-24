@@ -38,14 +38,14 @@ const Events = () => {
       <h2 className="text-3xl font-semibold mb-4">Events</h2>
       <div className="py-4">
         <div className="glass p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input value={query} onChange={e=>{ setQuery(e.target.value); setPage(1); }} placeholder="Search events" className="w-full md:col-span-2 p-3 bg-transparent border border-white/10 rounded text-white" />
-          <input value={location} onChange={e=>{ setLocation(e.target.value); setPage(1); }} placeholder="Location" className="w-full p-3 bg-transparent border border-white/10 rounded text-white" />
-          <select value={category} onChange={e=>{ setCategory(e.target.value); setPage(1); }} className="p-3 bg-transparent border border-white/10 rounded text-white">
+          <input value={query} onChange={e=>{ setQuery(e.target.value); setPage(1); }} placeholder="Search events" className="w-full md:col-span-2 p-3 bg-transparent border border-theme rounded text-theme" />
+          <input value={location} onChange={e=>{ setLocation(e.target.value); setPage(1); }} placeholder="Location" className="w-full p-3 bg-transparent border border-theme rounded text-theme" />
+          <select value={category} onChange={e=>{ setCategory(e.target.value); setPage(1); }} className="p-3 bg-transparent border border-theme rounded text-theme">
             {categories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <div className="flex items-center gap-2">
-            <input value={date} onChange={e=>{ setDate(e.target.value); setPage(1); }} type="date" className="p-2 bg-transparent border border-white/10 rounded text-white" />
-            <select value={priceFilter} onChange={e=>{ setPriceFilter(e.target.value); setPage(1); }} className="p-2 bg-transparent border border-white/10 rounded text-white">
+            <input value={date} onChange={e=>{ setDate(e.target.value); setPage(1); }} type="date" className="p-2 bg-transparent border border-theme rounded text-theme" />
+            <select value={priceFilter} onChange={e=>{ setPriceFilter(e.target.value); setPage(1); }} className="p-2 bg-transparent border border-theme rounded text-theme">
               <option value="All">All Prices</option>
               <option value="Free">Free</option>
               <option value="Paid">Paid</option>
@@ -56,7 +56,7 @@ const Events = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
         {(filtered.length === 0) ? (
-          <div className="col-span-full text-center py-12 text-gray-500">No events found.</div>
+          <div className="col-span-full text-center py-12 text-theme-weak">No events found.</div>
         ) : (
           filtered.slice((page-1)*pageSize, page*pageSize).map(e => (
             <EventCard key={e.id} id={e.id} title={e.title} date={formatDate(e.date)} location={e.location} price={e.price} image={e.image} />
@@ -65,7 +65,7 @@ const Events = () => {
       </div>
 
       <div className="mt-8 flex items-center justify-between">
-        <div className="text-sm text-gray-600">{filtered.length} events</div>
+        <div className="text-sm text-theme-weak">{filtered.length} events</div>
         <div className="flex items-center gap-2">
           <button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} className="px-3 py-1 border rounded disabled:opacity-50">Previous</button>
           <div className="px-3">Page {page} / {Math.max(1, Math.ceil(filtered.length / pageSize))}</div>

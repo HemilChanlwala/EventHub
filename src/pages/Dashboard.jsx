@@ -67,7 +67,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl font-semibold">Welcome{user?.name ? `, ${user.name}` : ''}</h2>
-              <p className="text-sm text-gray-500">Overview of your activity</p>
+              <p className="text-sm text-theme-weak">Overview of your activity</p>
             </div>
           </div>
 
@@ -87,9 +87,9 @@ const Dashboard = () => {
                 userRegs.map(r => (
                   <div key={r.ticketId} className="glass p-4 rounded">
                     <div className="font-semibold">{r.eventTitle}</div>
-                    <div className="text-sm text-gray-400">{r.ticketType} • {r.ticketId}</div>
+                    <div className="text-sm text-theme-weak">{r.ticketType} • {r.ticketId}</div>
                     <div className="mt-3 flex items-center gap-2">
-                      <a href={`/ticket/${r.ticketId}`} className="px-3 py-1 bg-white/5 text-white rounded text-sm">View Ticket</a>
+                      <a href={`/ticket/${r.ticketId}`} className="px-3 py-1 bg-white/5 text-theme rounded text-sm">View Ticket</a>
                       <button onClick={() => { try { generateCertificate(r); notify('Certificate downloaded') } catch (err) { void err } }} className="px-3 py-1 bg-indigo-600 text-white rounded text-sm">Download Certificate</button>
                       <button onClick={() => {
                         try {

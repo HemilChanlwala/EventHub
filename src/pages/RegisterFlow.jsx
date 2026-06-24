@@ -94,15 +94,15 @@ const RegisterFlow = () => {
         <form onSubmit={onSubmitStep} className="space-y-4">
           <div>
             <label className="block text-sm text-gray-300">Full name</label>
-            <input required value={form.name} onChange={e=>setForm({...form, name: e.target.value})} className="w-full p-3 bg-transparent border border-white/10 rounded" />
+            <input required value={form.name} onChange={e=>setForm({...form, name: e.target.value})} className="w-full p-3 bg-transparent border border-theme rounded" />
           </div>
           <div>
             <label className="block text-sm text-gray-300">Email</label>
-            <input required value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full p-3 bg-transparent border border-white/10 rounded" />
+            <input required value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full p-3 bg-transparent border border-theme rounded" />
           </div>
           <div>
             <label className="block text-sm text-gray-300">Phone</label>
-            <input required value={form.phone} onChange={e=>setForm({...form, phone: e.target.value})} className="w-full p-3 bg-transparent border border-white/10 rounded" />
+            <input required value={form.phone} onChange={e=>setForm({...form, phone: e.target.value})} className="w-full p-3 bg-transparent border border-theme rounded" />
           </div>
           <div className="flex justify-end">
             <button className="px-4 py-2 bg-indigo-600 text-white rounded">Next</button>
@@ -114,7 +114,7 @@ const RegisterFlow = () => {
         <form onSubmit={onSubmitStep} className="space-y-4">
           <div>
             <label className="block text-sm text-gray-300">Ticket Type</label>
-            <select value={ticketType} onChange={e=>setTicketType(e.target.value)} className="w-full p-3 bg-transparent border border-white/10 rounded">
+            <select value={ticketType} onChange={e=>setTicketType(e.target.value)} className="w-full p-3 bg-transparent border border-theme rounded">
               <option value="Standard">Standard — {event.price}</option>
               <option value="VIP">VIP — {priceToLabel(ticketPrices.VIP)}</option>
               <option value="Premium">Premium — {priceToLabel(ticketPrices.Premium)}</option>
@@ -152,10 +152,10 @@ const RegisterFlow = () => {
             <div className="flex justify-between mt-2"><div>Amount</div><div>{priceToLabel(price)}</div></div>
             <div className="mt-3">
               <label className="block text-sm text-gray-300">Cardholder name</label>
-              <input className="w-full p-3 bg-transparent border border-white/10 rounded" />
+              <input className="w-full p-3 bg-transparent border border-theme rounded" />
               <div className="grid grid-cols-3 gap-2 mt-2">
-                <input placeholder="Card number" className="col-span-2 p-3 bg-transparent border border-white/10 rounded" />
-                <input placeholder="CVC" className="p-3 bg-transparent border border-white/10 rounded" />
+                <input placeholder="Card number" className="col-span-2 p-3 bg-transparent border border-theme rounded" />
+                <input placeholder="CVC" className="p-3 bg-transparent border border-theme rounded" />
               </div>
             </div>
           </div>

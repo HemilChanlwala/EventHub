@@ -27,35 +27,27 @@ export default function useAuth() {
   }, [])
 
   const register = async (email, password) => {
-    const { data, error } = await supabase.auth.signUp({
+    return await supabase.auth.signUp({
       email,
       password,
     })
-
-    return { data, error }
   }
 
   const login = async (email, password) => {
-    const { data, error } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-    return { data, error }
+    return await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
   }
 
   const loginWithGoogle = async () => {
-    const { data, error } =
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin,
-        },
-      })
-
-    return { data, error }
-  }
+  return await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${window.location.origin}/dashboard`,
+    },
+  })
+}
 
   const logout = async () => {
     await supabase.auth.signOut()

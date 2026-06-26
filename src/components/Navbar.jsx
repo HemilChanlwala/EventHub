@@ -31,6 +31,8 @@ const Navbar = () => {
 
   const navClass = `glass-navbar ${scrolled ? 'solid' : ''}`
   const { user, logout } = useContext(AuthContext)
+  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
+  const dashboardLink = user ? '/dashboard' : '/login'
 
   return (
     <nav className={navClass}>
@@ -39,6 +41,7 @@ const Navbar = () => {
         <div className="hidden md:flex space-x-6 items-center">
           <Link to="/">Home</Link>
           <Link to="/events">Events</Link>
+          <Link to={dashboardLink}>Dashboard</Link>
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
         </div>
@@ -50,7 +53,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                <Link to="/profile">Hi, {user.name}</Link>
+                <Link to="/profile">Hi, {displayName}</Link>
                 {user.role === 'organizer' && <Link to="/organizer">Organizer</Link>}
                 {user.role === 'admin' && <Link to="/admin">Admin</Link>}
                 <button onClick={() => { logout(); }} className="px-3 py-1 border rounded border-theme">Logout</button>
@@ -73,6 +76,7 @@ const Navbar = () => {
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="md:hidden px-4 pb-4 space-y-2 overflow-hidden">
             <Link to="/" className="block">Home</Link>
             <Link to="/events" className="block">Events</Link>
+            <Link to={dashboardLink} className="block">Dashboard</Link>
             <Link to="/about" className="block">About</Link>
             <Link to="/contact" className="block">Contact</Link>
             {user ? (

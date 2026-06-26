@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { useContext } from 'react'
 import MainLayout from './layouts/MainLayout'
+import AuthContext from './context/AuthContext'
 import Home from './pages/Home'
 import Events from './pages/Events'
 import EventDetails from './pages/EventDetails'
@@ -16,6 +18,14 @@ import AdminDashboard from './pages/AdminDashboard'
 import Ticket from './pages/Ticket'
 import './App.css'
 
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useContext(AuthContext)
+
+  if (loading) return null
+
+  return user ? children : <Navigate to="/login" replace />
+}
+
 function App() {
   return (
     <Router>
@@ -28,11 +38,11 @@ function App() {
         <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
         <Route path="/register" element={<MainLayout><Register /></MainLayout>} />
         <Route path="/events/:id/register" element={<MainLayout><RegisterFlow /></MainLayout>} />
-        <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
-        <Route path="/organizer" element={<MainLayout><OrganizerDashboard /></MainLayout>} />
-        <Route path="/organizer/checkin" element={<MainLayout><CheckIn /></MainLayout>} />
-        <Route path="/admin" element={<MainLayout><AdminDashboard /></MainLayout>} />
-        <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
+        <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
+        <Route path="/organizer" element={<ProtectedRoute><MainLayout><OrganizerDashboard /></MainLayout></ProtectedRoute>} />
+        <Route path="/organizer/checkin" element={<ProtectedRoute><MainLayout><CheckIn /></MainLayout></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><MainLayout><AdminDashboard /></MainLayout></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
         <Route path="/ticket/:ticketId" element={<MainLayout><Ticket /></MainLayout>} />
         <Route path="*" element={<MainLayout><Home /></MainLayout>} />
       </Routes>

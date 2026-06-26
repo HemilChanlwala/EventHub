@@ -10,6 +10,9 @@ const Register = () => {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [role, setRole] = useState('attendee')
   const [remember, setRemember] = useState(true)
   const [error, setError] = useState('')
@@ -18,8 +21,13 @@ const Register = () => {
     e.preventDefault()
     setError('')
 
-    if (!email || !password) {
-      setError('Email and password are required')
+    if (!email || !password || !confirmPassword) {
+      setError('Email, password, and confirm password are required')
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
       return
     }
 
@@ -85,16 +93,51 @@ const Register = () => {
           className="w-full p-3 border rounded bg-transparent"
         />
 
-        <input
-          type="password"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-          placeholder="Password"
-          className="w-full p-3 border rounded bg-transparent"
-          required
-        />
+        <div>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) =>
+              setPassword(e.target.value)
+            }
+            placeholder="Password"
+            className="w-full p-3 border rounded bg-transparent"
+            required
+          />
+          <div className="mt-2 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="text-sm text-indigo-600"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? 'Hide password' : 'Show password'}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <input
+            type={showConfirmPassword ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={(e) =>
+              setConfirmPassword(e.target.value)
+            }
+            placeholder="Confirm Password"
+            className="w-full p-3 border rounded bg-transparent"
+            required
+          />
+          <div className="mt-2 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="text-sm text-indigo-600"
+              aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+            >
+              {showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+            </button>
+          </div>
+        </div>
 
         <div className="flex items-center gap-3">
           <label className="text-sm">

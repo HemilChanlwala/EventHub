@@ -8,6 +8,7 @@ const Login = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [remember, setRemember] = useState(false)
   const [error, setError] = useState('')
 
@@ -77,7 +78,7 @@ const Login = () => {
 
           <input
             id="login-password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             aria-label="Password"
             value={password}
             onChange={(e) =>
@@ -87,6 +88,16 @@ const Login = () => {
             className="w-full p-3 border rounded"
             required
           />
+          <div className="mt-2 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="text-sm text-indigo-600"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? 'Hide password' : 'Show password'}
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center justify-between">

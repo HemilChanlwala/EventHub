@@ -16,6 +16,12 @@ import OrganizerDashboard from './pages/OrganizerDashboard'
 import CheckIn from './pages/CheckIn'
 import AdminDashboard from './pages/AdminDashboard'
 import Ticket from './pages/Ticket'
+import ForgotPassword from './pages/ForgotPassword'
+import CreateEvent from './pages/CreateEvent'
+import MyEvents from './pages/MyEvents'
+import Tickets from './pages/Tickets'
+import Notifications from './pages/Notifications'
+import Settings from './pages/Settings'
 import './App.css'
 
 const ProtectedRoute = ({ children }) => {
@@ -37,6 +43,12 @@ function App() {
         <Route path="/contact" element={<MainLayout><Contact /></MainLayout>} />
         <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
         <Route path="/register" element={<MainLayout><Register /></MainLayout>} />
+        <Route path="/forgot-password" element={<MainLayout><ForgotPassword /></MainLayout>} />
+        <Route path="/create-event" element={<ProtectedRoute><MainLayout><CreateEvent /></MainLayout></ProtectedRoute>} />
+        <Route path="/my-events" element={<ProtectedRoute><MainLayout><MyEvents /></MainLayout></ProtectedRoute>} />
+        <Route path="/tickets" element={<ProtectedRoute><MainLayout><Tickets /></MainLayout></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><MainLayout><Notifications /></MainLayout></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
         <Route path="/events/:id/register" element={<MainLayout><RegisterFlow /></MainLayout>} />
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
         <Route path="/organizer" element={<ProtectedRoute><MainLayout><OrganizerDashboard /></MainLayout></ProtectedRoute>} />

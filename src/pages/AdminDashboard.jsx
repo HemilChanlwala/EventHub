@@ -3,7 +3,7 @@ import StatsCard from '../components/StatsCard'
 import { SampleBar } from '../components/ChartWrapper'
 import { getUsers, getEvents, deleteUser, deleteEvent, saveUser } from '../services'
 import { exportCsv } from '../utils/exportCsv'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const AdminDashboard = () => {
   const stats = [
@@ -89,8 +89,20 @@ function UsersList() {
 }
 
 function EventsList() {
-  const [events, setEvents] = useState(() => getEvents())
-  const refresh = () => setEvents(getEvents())
+  const [events, setEvents] = useState([])
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getEvents(true)
+      setEvents(data)
+    }
+    load()
+  }, [])
+
+  const refresh = async () => {
+    const data = await getEvents(true)
+    setEvents(data)
+  }
 
   return (
     <div className="space-y-2">

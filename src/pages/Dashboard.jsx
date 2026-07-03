@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [registrations, setRegistrations] = useState(() => {
     try { return JSON.parse(localStorage.getItem('eventhub_registrations') || '[]') } catch { return [] }
   })
+  const [events, setEvents] = useState([])
 
   useEffect(() => {
     const onStorage = () => {
@@ -23,7 +24,14 @@ const Dashboard = () => {
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-  const events = getEvents()
+  useEffect(() => {
+    const load = async () => {
+      const data = await getEvents(true)
+      setEvents(data)
+    }
+    load()
+  }, [])
+
   const userRegs = registrations.filter(r => !user || (user.email && r.email === user.email))
   const [upcomingCount, setUpcomingCount] = useState(0)
 

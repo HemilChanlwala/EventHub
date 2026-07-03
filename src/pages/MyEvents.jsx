@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import EventCard from '../components/EventCard'
 import { getEvents } from '../services'
@@ -6,7 +6,15 @@ import AuthContext from '../context/AuthContext'
 
 const MyEvents = () => {
   const { user } = useContext(AuthContext)
-  const events = useMemo(() => getEvents().filter((event) => String(event.creator) === String(user?.id)), [user])
+  const [events, setEvents] = useState([])
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getEvents(true)
+      setEvents(data.filter((event) => String(event.creator) === String(user?.id)))
+    }
+    load()
+  }, [user?.id])
 
   return (
     <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">

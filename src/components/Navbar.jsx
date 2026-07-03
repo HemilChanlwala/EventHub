@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import AuthContext from '../context/AuthContext'
 
@@ -30,9 +30,15 @@ const Navbar = () => {
   }, [])
 
   const navClass = `glass-navbar ${scrolled ? 'solid' : ''}`
+  const navigate = useNavigate()
   const { user, logout } = useContext(AuthContext)
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
   const dashboardLink = user ? '/dashboard' : '/login'
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
 
   return (
     <nav className={navClass}>
@@ -56,7 +62,7 @@ const Navbar = () => {
                 <Link to="/profile">Hi, {displayName}</Link>
                 {user.role === 'organizer' && <Link to="/organizer">Organizer</Link>}
                 {user.role === 'admin' && <Link to="/admin">Admin</Link>}
-                <button onClick={() => { logout(); }} className="px-3 py-1 border rounded border-theme">Logout</button>
+                <button onClick={handleLogout} className="px-3 py-1 border rounded border-theme">Logout</button>
               </>
             ) : (
               <>
@@ -84,7 +90,7 @@ const Navbar = () => {
                 <Link to="/profile" className="block">Profile</Link>
                 {user.role === 'organizer' && <Link to="/organizer" className="block">Organizer</Link>}
                 {user.role === 'admin' && <Link to="/admin" className="block">Admin</Link>}
-                <button onClick={() => { logout(); setOpen(false) }} className="block text-left">Logout</button>
+                <button onClick={() => { handleLogout(); setOpen(false) }} className="block text-left">Logout</button>
               </>
             ) : (
               <>

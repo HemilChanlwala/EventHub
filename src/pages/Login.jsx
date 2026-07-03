@@ -1,9 +1,9 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import AuthContext from '../context/AuthContext'
+import { useAuthContext } from '../context/AuthContext'
 
 const Login = () => {
-  const { login, loginWithGoogle } =useContext(AuthContext)
+  const { login, loginWithGoogle } = useAuthContext()
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
@@ -16,14 +16,20 @@ const Login = () => {
     e.preventDefault()
     setError('')
 
-    const { error } = await login(email, password)
+    const result = await login(email, password)
 
-    if (error) {
-      setError(error.message)
+    if (!result.success) {
+      setError(result.error)
       return
     }
 
-    navigate('/dashboard')
+    if (result.role === 'organizer') {
+      navigate('/organizer')
+    } else if (result.role === 'admin') {
+      navigate('/admin')
+    } else {
+      navigate('/dashboard')
+    }
   }
 
   const handleGoogle = async () => {

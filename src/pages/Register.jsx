@@ -1,9 +1,9 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AuthContext from '../context/AuthContext'
+import { useAuthContext } from '../context/AuthContext'
 
 const Register = () => {
-  const { register, loginWithGoogle } = useContext(AuthContext)
+  const { register, loginWithGoogle } = useAuthContext()
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -13,7 +13,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [role, setRole] = useState('attendee')
+  const [role, setRole] = useState('user')
   const [remember, setRemember] = useState(true)
   const [error, setError] = useState('')
 
@@ -31,16 +31,20 @@ const Register = () => {
       return
     }
 
-    const { error } = await register(
+    const result = await register({
+      fullName: name,
       email,
-      password
-    )
+      phone,
+      password,
+      role,
+    })
 
-    if (error) {
-      setError(error.message)
+    if (!result.success) {
+      setError(result.error)
       return
     }
 
+    alert('Registration Successful!')
     navigate('/login')
   }
 
@@ -181,8 +185,8 @@ const Register = () => {
             }
             className="p-2 border rounded"
           >
-            <option value="attendee">
-              Attendee
+            <option value="user">
+              User
             </option>
             <option value="organizer">
               Organizer

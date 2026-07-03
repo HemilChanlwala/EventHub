@@ -1,7 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useContext } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
-import AuthContext from './context/AuthContext'
+import ProtectedRoute from './routes/ProtectedRoute'
 import Home from './pages/Home'
 import Events from './pages/Events'
 import EventDetails from './pages/EventDetails'
@@ -23,14 +22,6 @@ import Tickets from './pages/Tickets'
 import Notifications from './pages/Notifications'
 import Settings from './pages/Settings'
 import './App.css'
-
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useContext(AuthContext)
-
-  if (loading) return null
-
-  return user ? children : <Navigate to="/login" replace />
-}
 
 function App() {
   return (

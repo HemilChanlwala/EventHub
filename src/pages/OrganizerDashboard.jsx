@@ -10,12 +10,14 @@ import { notify } from '../utils/notify'
 const OrganizerDashboard = () => {
   const { user } = useContext(AuthContext)
 
-  const [events, setEvents] = useState(() => getEvents())
+  const [events, setEvents] = useState([])
 
   useEffect(() => {
-    const onStorage = () => setEvents(getEvents())
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
+    const load = async () => {
+      const data = await getEvents(true)
+      setEvents(data)
+    }
+    load()
   }, [])
 
   const myEvents = events.filter(e => !user?.id || e.creator === user?.id)
@@ -34,20 +36,22 @@ const OrganizerDashboard = () => {
     { title: 'Attendees', value: '—' },
   ]
 
-  const handleCreate = (ev) => {
+  const handleCreate = async (ev) => {
     try {
       const toSave = { ...ev, creator: user?.id }
-      saveEvent(toSave)
-      setEvents(getEvents())
+      await saveEvent(toSave)
+      const data = await getEvents(true)
+      setEvents(data)
       notify('Event created', 'info')
     } catch (err) { console.warn(err); notify('Failed to create event', 'error') }
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!confirm('Delete this event?')) return
     try {
       deleteEvent(id)
-      setEvents(getEvents())
+      const data = await getEvents(true)
+      setEvents(data)
       notify('Event deleted', 'info')
     } catch (err) { console.warn(err); notify('Failed to delete', 'error') }
   }
@@ -99,13 +103,11 @@ export default OrganizerDashboard
 function CreateEventForm({ onCreate }) {
   const [form, setForm] = useState({ title: '', date: '', location: '', price: '', category: '', seats: 100 })
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     try {
-      const events = getEvents()
-      const maxId = events.reduce((m, it) => Math.max(m, Number(it.id) || 0), 0)
-      const ev = { ...form, id: maxId + 1 }
-      onCreate(ev)
+      const ev = { ...form }
+      await onCreate(ev)
       setForm({ title: '', date: '', location: '', price: '', category: '', seats: 100 })
     } catch (err) { console.warn(err) }
   }

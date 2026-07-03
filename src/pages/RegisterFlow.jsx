@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { getEvents } from '../services'
+import { getEvents, saveRegistration } from '../services'
 import formatDate from '../utils/formatDate'
 
 const parsePrice = (p) => {
@@ -18,25 +18,35 @@ function makeTicketId(eventId) {
 const RegisterFlow = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const events = getEvents()
-  const event = events.find(e => String(e.id) === String(id)) || events[0]
-
+  const [event, setEvent] = useState(null)
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ name: '', email: '', phone: '' })
   const [ticketType, setTicketType] = useState('Standard')
   const [ticketId, setTicketId] = useState(null)
   const [processing, setProcessing] = useState(false)
 
+  useEffect(() => {
+    const load = async () => {
+      const events = await getEvents(true)
+      const selected = events.find((e) => String(e.id) === String(id)) || events[0]
+      setEvent(selected)
+    }
+    load()
+  }, [id])
+
+  if (!event) return <div className="p-8">Loading event…</div>
+
   const base = parsePrice(event.price)
   const ticketPrices = {
     Standard: base,
     VIP: Math.round(base * 1.3),
-    Premium: Math.round(base * 1.6)
+    Premium: Math.round(base * 1.6),
   }
   const price = ticketPrices[ticketType]
 
-  const finalizeRegistration = () => {
+  const finalizeRegistration = async () => {
     const tid = makeTicketId(event.id)
+    const qrData = JSON.stringify({ ticketId: tid, event: event.title })
     const reg = {
       ticketId: tid,
       eventId: event.id,
@@ -46,37 +56,36 @@ const RegisterFlow = () => {
       phone: form.phone,
       ticketType,
       price,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      qrData,
     }
-    try {
-      const existing = JSON.parse(localStorage.getItem('eventhub_registrations') || '[]')
-      existing.push(reg)
-      localStorage.setItem('eventhub_registrations', JSON.stringify(existing))
-    } catch (err) {
-      console.warn('save registration', err)
-    }
+
+    await saveRegistration(reg)
     setTicketId(tid)
     setStep(5)
   }
 
-  const onSubmitStep = (e) => {
+  const onSubmitStep = async (e) => {
     e?.preventDefault()
     if (step < 3) {
       setStep(step + 1)
       return
     }
-    // From review -> if free, finalize immediately; else go to payment step
     if (step === 3) {
       if (price === 0) {
-        finalizeRegistration()
+        await finalizeRegistration()
         return
       }
       setStep(4)
       return
     }
-    // step === 4 (payment confirmed) -> finalize
     if (step === 4) {
-      finalizeRegistration()
+      setProcessing(true)
+      try {
+        await finalizeRegistration()
+      } finally {
+        setProcessing(false)
+      }
     }
   }
 
@@ -94,15 +103,15 @@ const RegisterFlow = () => {
         <form onSubmit={onSubmitStep} className="space-y-4">
           <div>
             <label className="block text-sm text-gray-300">Full name</label>
-            <input required value={form.name} onChange={e=>setForm({...form, name: e.target.value})} className="w-full p-3 bg-transparent border border-theme rounded" />
+            <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full p-3 bg-transparent border border-theme rounded" />
           </div>
           <div>
             <label className="block text-sm text-gray-300">Email</label>
-            <input required value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full p-3 bg-transparent border border-theme rounded" />
+            <input required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full p-3 bg-transparent border border-theme rounded" />
           </div>
           <div>
             <label className="block text-sm text-gray-300">Phone</label>
-            <input required value={form.phone} onChange={e=>setForm({...form, phone: e.target.value})} className="w-full p-3 bg-transparent border border-theme rounded" />
+            <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full p-3 bg-transparent border border-theme rounded" />
           </div>
           <div className="flex justify-end">
             <button className="px-4 py-2 bg-indigo-600 text-white rounded">Next</button>
@@ -114,14 +123,14 @@ const RegisterFlow = () => {
         <form onSubmit={onSubmitStep} className="space-y-4">
           <div>
             <label className="block text-sm text-gray-300">Ticket Type</label>
-            <select value={ticketType} onChange={e=>setTicketType(e.target.value)} className="w-full p-3 bg-transparent border border-theme rounded">
+            <select value={ticketType} onChange={(e) => setTicketType(e.target.value)} className="w-full p-3 bg-transparent border border-theme rounded">
               <option value="Standard">Standard — {event.price}</option>
               <option value="VIP">VIP — {priceToLabel(ticketPrices.VIP)}</option>
               <option value="Premium">Premium — {priceToLabel(ticketPrices.Premium)}</option>
             </select>
           </div>
           <div className="flex justify-between">
-            <button type="button" onClick={()=>setStep(1)} className="px-4 py-2 border rounded">Back</button>
+            <button type="button" onClick={() => setStep(1)} className="px-4 py-2 border rounded">Back</button>
             <button className="px-4 py-2 bg-indigo-600 text-white rounded">Next</button>
           </div>
         </form>
@@ -138,7 +147,7 @@ const RegisterFlow = () => {
             <div className="flex justify-between font-bold mt-1"><div>Total</div><div>{priceToLabel(price)}</div></div>
           </div>
           <div className="flex justify-between">
-            <button onClick={()=>setStep(2)} className="px-4 py-2 border rounded">Back</button>
+            <button onClick={() => setStep(2)} className="px-4 py-2 border rounded">Back</button>
             <button onClick={onSubmitStep} className="px-4 py-2 bg-indigo-600 text-white rounded">Confirm & Pay</button>
           </div>
         </div>
@@ -160,13 +169,13 @@ const RegisterFlow = () => {
             </div>
           </div>
           <div className="flex justify-between">
-            <button onClick={()=>setStep(3)} className="px-4 py-2 border rounded">Back</button>
-            <button onClick={(e)=>{ e?.preventDefault(); setProcessing(true); setTimeout(()=>{ finalizeRegistration(); setProcessing(false) }, 900) }} disabled={processing} className="px-4 py-2 bg-indigo-600 text-white rounded">{processing ? 'Processing...' : `Pay ${priceToLabel(price)}`}</button>
+            <button onClick={() => setStep(3)} className="px-4 py-2 border rounded">Back</button>
+            <button onClick={onSubmitStep} disabled={processing} className="px-4 py-2 bg-indigo-600 text-white rounded">{processing ? 'Processing...' : `Pay ${priceToLabel(price)}`}</button>
           </div>
         </div>
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Registration Successful</h3>
           <p className="text-sm text-gray-300">Your ticket has been generated. Save or download the QR code below for entry.</p>
@@ -181,7 +190,7 @@ const RegisterFlow = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={()=>navigate('/dashboard')} className="px-4 py-2 bg-indigo-600 text-white rounded">Go to Dashboard</button>
+            <button onClick={() => navigate('/dashboard')} className="px-4 py-2 bg-indigo-600 text-white rounded">Go to Dashboard</button>
             <Link to={`/events/${event.id}`} className="px-4 py-2 border rounded">Back to Event</Link>
           </div>
         </div>

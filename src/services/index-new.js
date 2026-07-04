@@ -1,4 +1,3 @@
-import sampleEvents from '../data/sampleEvents'
 import { supabase } from '../lib/supabase'
 
 const STORAGE_KEY = 'eventhub_events'
@@ -52,9 +51,8 @@ const writeLocalEvents = (events) => {
 }
 
 const fallbackEvents = () => {
-  const seeded = Array.isArray(sampleEvents) ? sampleEvents.map(normalizeEvent) : []
   const local = readLocalEvents()
-  return [...local, ...seeded].filter((event, index, all) => index === all.findIndex((candidate) => String(candidate.id) === String(event.id)))
+  return local
 }
 
 export const getEvents = async (useSupabase = false) => {

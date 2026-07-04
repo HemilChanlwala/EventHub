@@ -24,7 +24,7 @@ describe('Navbar', () => {
 
   it('shows the signed-in user name in the navbar', () => {
     render(
-      <AuthContext.Provider value={{ user: { email: 'jane@example.com', user_metadata: { full_name: 'Jane Doe' } }, logout: vi.fn() }}>
+      <AuthContext.Provider value={{ user: { email: 'jane@example.test', user_metadata: { full_name: 'Jane Doe' } }, logout: vi.fn() }}>
         <MemoryRouter>
           <Navbar />
         </MemoryRouter>
@@ -56,7 +56,7 @@ describe('Navbar', () => {
     const logout = vi.fn().mockResolvedValue(undefined)
 
     render(
-      <AuthContext.Provider value={{ user: { email: 'jane@example.com', user_metadata: { full_name: 'Jane Doe' } }, logout }}>
+      <AuthContext.Provider value={{ user: { email: 'jane@example.test', user_metadata: { full_name: 'Jane Doe' } }, logout }}>
         <MemoryRouter initialEntries={['/']}>
           <Routes>
             <Route path="/" element={<Navbar />} />

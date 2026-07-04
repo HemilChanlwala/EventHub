@@ -69,9 +69,9 @@ describe('Authentication pages', () => {
     fireEvent.change(screen.getByPlaceholderText(/full name/i), {
       target: { value: 'Jane Doe' },
     })
-    fireEvent.change(screen.getByPlaceholderText(/email/i), {
-      target: { value: 'jane@example.com' },
-    })
+      fireEvent.change(screen.getByPlaceholderText(/email/i), {
+        target: { value: 'jane@example.test' },
+      })
     fireEvent.change(screen.getByPlaceholderText(/^password$/i), {
       target: { value: 'secret123' },
     })
@@ -91,9 +91,9 @@ describe('Authentication pages', () => {
     fireEvent.change(screen.getByPlaceholderText(/full name/i), {
       target: { value: 'Jane Doe' },
     })
-    fireEvent.change(screen.getByPlaceholderText(/email/i), {
-      target: { value: 'jane@example.com' },
-    })
+      fireEvent.change(screen.getByPlaceholderText(/email/i), {
+        target: { value: 'jane@example.test' },
+      })
     fireEvent.change(screen.getByPlaceholderText(/phone/i), {
       target: { value: '1234567890' },
     })
@@ -112,7 +112,7 @@ describe('Authentication pages', () => {
     await waitFor(() => {
       expect(register).toHaveBeenCalledWith({
         fullName: 'Jane Doe',
-        email: 'jane@example.com',
+          email: 'jane@example.test',
         phone: '1234567890',
         password: 'secret123',
         role: 'organizer',
@@ -135,9 +135,9 @@ describe('Authentication pages', () => {
       </AuthContext.Provider>
     )
 
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'jane@example.com' },
-    })
+      fireEvent.change(screen.getByLabelText(/email/i), {
+        target: { value: 'jane@example.test' },
+      })
     fireEvent.change(screen.getByLabelText(/^password$/i), {
       target: { value: 'secret123' },
     })
@@ -155,7 +155,7 @@ describe('Authentication pages', () => {
     const { result } = renderHook(() => useAuth())
 
     await act(async () => {
-      await result.current.login('jane@example.com', 'secret123')
+        await result.current.login('jane@example.test', 'secret123')
     })
 
     expect(consoleSpy).toHaveBeenCalledWith(session)
@@ -165,7 +165,7 @@ describe('Authentication pages', () => {
 
   it('loads the current user on startup via getUser', async () => {
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-    const user = { email: 'jane@example.com' }
+      const user = { email: 'jane@example.test' }
     supabase.auth.getSession.mockResolvedValue({ data: { session: null } })
     supabase.auth.getUser.mockResolvedValue({ data: { user }, error: null })
 

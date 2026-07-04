@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import EventCard from '../components/EventCard'
-import sampleEvents from '../data/sampleEvents'
 import formatDate from '../utils/formatDate'
 import StatsCard from '../components/StatsCard'
 
@@ -18,6 +17,8 @@ const testimonials = [
   { id: 2, name: 'Maria Lee', rating: 5, review: 'Great platform for organizers and attendees alike.' },
   { id: 3, name: 'Sam Park', rating: 4, review: 'Smooth experience and useful recommendations.' },
 ]
+
+const featuredEvents = []
 
 const Home = () => {
   return (
@@ -39,7 +40,9 @@ const Home = () => {
 
           <div className="flex justify-center md:justify-end">
             <div className="w-full max-w-sm">
-              <EventCard id={sampleEvents[1].id} title={sampleEvents[1].title} date={formatDate(sampleEvents[1].date)} location={sampleEvents[1].location} price={sampleEvents[1].price} image={sampleEvents[1].image} />
+              {featuredEvents[1] && (
+                <EventCard id={featuredEvents[1].id} title={featuredEvents[1].title} date={formatDate(featuredEvents[1].date)} location={featuredEvents[1].location} price={featuredEvents[1].price} image={featuredEvents[1].image} />
+              )}
             </div>
           </div>
         </div>
@@ -57,7 +60,7 @@ const Home = () => {
       <section className="py-12">
         <h2 className="text-2xl font-semibold mb-6">Featured Events</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {sampleEvents.slice(0,6).map(e => (
+          {featuredEvents.slice(0,6).map(e => (
             <EventCard key={e.id} id={e.id} title={e.title} date={formatDate(e.date)} location={e.location} price={e.price} image={e.image} />
           ))}
         </div>

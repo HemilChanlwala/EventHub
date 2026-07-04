@@ -62,7 +62,11 @@ export const getEvents = async (useSupabase = false) => {
       if (!error && Array.isArray(data)) {
         const normalized = data.map(normalizeEvent)
         writeLocalEvents(normalized)
-        return normalized
+        if (normalized.length > 0) {
+          return normalized
+        }
+        const local = readLocalEvents()
+        if (local.length) return local
       }
     } catch (err) {
       console.warn('getEvents from Supabase failed', err)
@@ -91,19 +95,21 @@ export const saveEvent = async (ev) => {
         category: normalized.category,
         venue: normalized.venue,
         city: normalized.city,
+        location: normalized.location,
         event_date: normalized.date,
         event_time: normalized.time,
         price: normalized.price,
         capacity: normalized.capacity,
         banner_url: normalized.banner_url,
         organizer_id: normalized.organizer_id || normalized.creator,
+        creator: normalized.creator,
         status: normalized.status,
         created_at: normalized.created_at,
       }
 
       const { data, error } = await supabase.from('events').insert([payload]).select().single()
       if (!error && data) {
-        const refreshed = normalizeEvent({ ...data, creator: data.organizer_id || data.creator || normalized.creator })
+        const refreshed = normalizeEvent({ ...data, creator: data.creator || data.organizer_id || normalized.creator })
         const next = [refreshed, ...existing.filter((event) => String(event.id) !== String(data.id))]
         writeLocalEvents(next)
         return refreshed

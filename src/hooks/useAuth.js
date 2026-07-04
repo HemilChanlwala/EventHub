@@ -26,7 +26,7 @@ const fetchProfile = async (authUser) => {
       .maybeSingle();
 
     if (!error && data) {
-      return data;
+      return buildProfileFromUser(authUser, data);
     }
   } catch (err) {
     console.warn("Unable to load profile from Supabase", err);
@@ -135,6 +135,7 @@ export default function useAuth() {
         phone,
         role: role || "user",
       });
+      setUser(data.user);
       setProfile(nextProfile);
     }
 

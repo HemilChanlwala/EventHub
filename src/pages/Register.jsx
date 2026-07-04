@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext'
 
 const Register = () => {
-  const { register, loginWithGoogle } = useAuthContext()
+  const { register, loginWithGoogle, login } = useAuthContext()
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -44,7 +44,19 @@ const Register = () => {
       return
     }
 
-    alert('Registration Successful!')
+    const loginResult = await login(email, password)
+    if (loginResult.success) {
+      if (loginResult.role === 'organizer') {
+        navigate('/create-event')
+      } else if (loginResult.role === 'admin') {
+        navigate('/admin')
+      } else {
+        navigate('/dashboard')
+      }
+      return
+    }
+
+    alert('Registration Successful! Please login to continue.')
     navigate('/login')
   }
 

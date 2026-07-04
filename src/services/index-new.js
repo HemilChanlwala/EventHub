@@ -61,13 +61,8 @@ export const getEvents = async (useSupabase = false) => {
       const { data, error } = await supabase.from('events').select('*').order('created_at', { ascending: false })
       if (!error && Array.isArray(data)) {
         const normalized = data.map(normalizeEvent)
-        const local = readLocalEvents()
-        const merged = [
-          ...normalized,
-          ...local.filter((localEvent) => !normalized.some((remoteEvent) => String(remoteEvent.id) === String(localEvent.id))),
-        ]
-        writeLocalEvents(merged)
-        return merged
+        writeLocalEvents(normalized)
+        return normalized
       }
     } catch (err) {
       console.warn('getEvents from Supabase failed', err)

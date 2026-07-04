@@ -60,21 +60,19 @@ const Events = () => {
     <div className="max-w-7xl mx-auto p-8">
       <h2 className="text-3xl font-semibold mb-4">Events</h2>
       <div className="py-4">
-        <div className="glass p-4 grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="glass p-4 grid grid-cols-1 md:grid-cols-6 gap-4">
           <input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1) }} placeholder="Search events" className="w-full md:col-span-2 p-3 bg-transparent border border-theme rounded text-theme" />
           <input value={location} onChange={(e) => { setLocation(e.target.value); setPage(1) }} placeholder="Location" className="w-full p-3 bg-transparent border border-theme rounded text-theme" />
-          <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1) }} className="p-3 bg-transparent border border-theme rounded text-theme">
+          <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1) }} className="w-full min-w-0 p-3 bg-transparent border border-theme rounded text-theme">
             {categories.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
-          <div className="flex items-center gap-2">
-            <input value={date} onChange={(e) => { setDate(e.target.value); setPage(1) }} type="date" className="p-2 bg-transparent border border-theme rounded text-theme" />
-            <select value={priceFilter} onChange={(e) => { setPriceFilter(e.target.value); setPage(1) }} className="p-2 bg-transparent border border-theme rounded text-theme">
-              <option value="All">All Prices</option>
-              <option value="Free">Free</option>
-              <option value="Paid">Paid</option>
-            </select>
-          </div>
-          <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1) }} className="p-2 bg-transparent border border-theme rounded text-theme">
+          <input value={date} onChange={(e) => { setDate(e.target.value); setPage(1) }} type="date" className="w-full min-w-0 p-2 bg-transparent border border-theme rounded text-theme" />
+          <select value={priceFilter} onChange={(e) => { setPriceFilter(e.target.value); setPage(1) }} className="w-full min-w-0 p-2 bg-transparent border border-theme rounded text-theme">
+            <option value="All">All Prices</option>
+            <option value="Free">Free</option>
+            <option value="Paid">Paid</option>
+          </select>
+          <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1) }} className="w-full min-w-0 p-2 bg-transparent border border-theme rounded text-theme">
             <option value="latest">Latest</option>
             <option value="oldest">Oldest</option>
             <option value="price-asc">Price Low → High</option>

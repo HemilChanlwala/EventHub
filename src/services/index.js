@@ -87,17 +87,16 @@ export const getEvents = async (useSupabase = false) => {
           return normalized
         }
       }
+      localStorage.removeItem(STORAGE_KEY)
+      return []
     } catch (err) {
       console.warn('getEvents from /api/events failed', err)
+      localStorage.removeItem(STORAGE_KEY)
+      return []
     }
   }
 
-  const local = readLocalEvents()
-  if (local.length) return local
-
-  const seeded = fallbackEvents()
-  writeLocalEvents(seeded)
-  return seeded
+  return []
 }
 
 export const saveEvent = async (ev) => {

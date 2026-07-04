@@ -94,12 +94,17 @@ const CreateEvent = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input value={form.title} onChange={(e) => handleChange('title', e.target.value)} placeholder="Event title" className="w-full p-3 border rounded" required />
-          <input value={form.start_date} onChange={(e) => handleChange('start_date', e.target.value)} type="date" className="w-full p-3 border rounded" required />
+          <input value={form.start_date} onChange={(e) => handleChange('start_date', e.target.value)} type="date" placeholder="Start date" className="w-full p-3 border rounded" required />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input value={form.start_time} onChange={(e) => handleChange('start_time', e.target.value)} type="time" className="w-full p-3 border rounded" />
-          <input value={form.end_date} onChange={(e) => handleChange('end_date', e.target.value)} type="date" className="w-full p-3 border rounded" />
+          <input value={form.start_time} onChange={(e) => handleChange('start_time', e.target.value)} type="time" placeholder="Start time" className="w-full p-3 border rounded" />
+          <input value={form.end_date} onChange={(e) => handleChange('end_date', e.target.value)} type="date" placeholder="End date" className="w-full p-3 border rounded" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input value={form.end_time} onChange={(e) => handleChange('end_time', e.target.value)} type="time" placeholder="End time" className="w-full p-3 border rounded" />
+          <input value={form.registration_deadline} onChange={(e) => handleChange('registration_deadline', e.target.value)} type="date" placeholder="Registration deadline" className="w-full p-3 border rounded" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -115,7 +120,7 @@ const CreateEvent = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input value={form.ticket_type} onChange={(e) => handleChange('ticket_type', e.target.value)} placeholder="Ticket Type (general, vip)" className="w-full p-3 border rounded" />
+          <input value={form.ticket_type} onChange={(e) => handleChange('ticket_type', e.target.value)} placeholder="Ticket type (e.g. general, vip)" className="w-full p-3 border rounded" />
           <input value={form.price} onChange={(e) => handleChange('price', e.target.value)} placeholder="Price (e.g. Free or $49)" className="w-full p-3 border rounded" />
         </div>
 
@@ -123,13 +128,13 @@ const CreateEvent = () => {
         <textarea value={form.full_description} onChange={(e) => handleChange('full_description', e.target.value)} placeholder="Full description" className="w-full p-3 border rounded h-40" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input value={form.registration_deadline} onChange={(e) => handleChange('registration_deadline', e.target.value)} type="date" placeholder="Registration deadline" className="w-full p-3 border rounded" />
           <input value={form.tags} onChange={(e) => handleChange('tags', e.target.value)} placeholder="Tags (comma separated)" className="w-full p-3 border rounded" />
+          <input value={form.organizer_name} onChange={(e) => handleChange('organizer_name', e.target.value)} placeholder="Organizer name" className="w-full p-3 border rounded" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input value={form.organizer_name} onChange={(e) => handleChange('organizer_name', e.target.value)} placeholder="Organizer name" className="w-full p-3 border rounded" />
           <input value={form.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} type="email" placeholder="Contact email" className="w-full p-3 border rounded" />
+          <input value={form.contact_phone} onChange={(e) => handleChange('contact_phone', e.target.value)} placeholder="Contact phone" className="w-full p-3 border rounded" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

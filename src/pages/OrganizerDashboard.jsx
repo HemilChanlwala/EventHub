@@ -31,7 +31,13 @@ const OrganizerDashboard = () => {
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-  const myEvents = events.filter(e => !user?.id || e.creator === user?.id)
+  const myEvents = events.filter(e => !user?.id || String(e.creator) === String(user?.id))
+
+  useEffect(() => {
+    if (!selectedEventId && myEvents.length > 0) {
+      setSelectedEventId(String(myEvents[0].id))
+    }
+  }, [myEvents, selectedEventId])
 
   const selectedEvent = myEvents.find(e => String(e.id) === String(selectedEventId)) || myEvents[0] || null
   const myRegistrations = registrations.filter(r => myEvents.some(e => String(e.id) === String(r.eventId)))

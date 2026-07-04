@@ -34,6 +34,28 @@ const normalizeEvent = (item = {}) => {
   }
 }
 
+const normalizeRegistration = (item = {}) => {
+  const eventId = item.eventId || item.event_id || item.event || null
+  const ticketId = item.ticketId || item.ticket_id || item.registration_id || item.ticket || null
+
+  return {
+    id: item.id ?? item.registration_id ?? null,
+    ticketId,
+    eventId,
+    eventTitle: item.eventTitle || item.event_title || item.event || '',
+    ticketType: item.ticketType || item.ticket_type || '',
+    price: item.price ?? item.cost ?? 0,
+    name: item.name || item.attendee_name || '',
+    email: item.email || item.attendee_email || '',
+    phone: item.phone || item.attendee_phone || '',
+    checkedIn: item.checkedIn ?? item.checked_in ?? false,
+    userId: item.userId || item.user_id || null,
+    createdAt: item.createdAt || item.created_at || item.createdAt || '',
+    created_at: item.created_at || item.createdAt || '',
+    qrData: item.qrData || item.qr_data || null,
+  }
+}
+
 const readLocalEvents = () => {
   try {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
@@ -211,7 +233,7 @@ export const getRegistrationsFromServer = async (eventId) => {
       throw new Error(`failed to fetch registrations ${res.status}`)
     }
     const data = await res.json()
-    return Array.isArray(data) ? data : []
+    return Array.isArray(data) ? data.map(normalizeRegistration) : []
   } catch (err) {
     console.warn('getRegistrationsFromServer failed', err)
     return []

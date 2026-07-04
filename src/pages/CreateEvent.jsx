@@ -138,9 +138,9 @@ const CreateEvent = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input value={form.contact_phone} onChange={(e) => handleChange('contact_phone', e.target.value)} placeholder="Contact phone" className="w-full p-3 border rounded" />
           <input value={form.website} onChange={(e) => handleChange('website', e.target.value)} placeholder="Website" className="w-full p-3 border rounded" />
           <input value={form.facebook} onChange={(e) => handleChange('facebook', e.target.value)} placeholder="Facebook link" className="w-full p-3 border rounded" />
+          <input value={form.instagram} onChange={(e) => handleChange('instagram', e.target.value)} placeholder="Instagram link" className="w-full p-3 border rounded" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

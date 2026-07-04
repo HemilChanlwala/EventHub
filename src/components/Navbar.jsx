@@ -46,11 +46,11 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="text-xl font-bold">EventHub</Link>
         <div className="hidden md:flex space-x-6 items-center">
-          <Link to="/">Home</Link>
-          <Link to="/events">Events</Link>
-          <Link to={dashboardLink}>Dashboard</Link>
-          <Link to="/about">About</Link>
-          <Link to="/contact">Contact</Link>
+          <Link to="/" className="transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Home</Link>
+          <Link to="/events" className="transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Events</Link>
+          <Link to={dashboardLink} className="transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Dashboard</Link>
+          <Link to="/about" className="transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">About</Link>
+          <Link to="/contact" className="transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Contact</Link>
         </div>
         <div className="flex items-center space-x-4">
           <button aria-label="Toggle theme" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className="px-2 py-1 rounded hover:bg-white/5">
@@ -67,8 +67,8 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link to="/login">Login</Link>
-                <Link to="/register" className="px-3 py-1 border rounded border-theme">Register</Link>
+                <Link to="/login" className="transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Login</Link>
+                <Link to="/register" className="px-3 py-1 border rounded border-theme transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow">Register</Link>
               </>
             )}
           </div>
@@ -81,11 +81,11 @@ const Navbar = () => {
       <AnimatePresence>
         {open && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="md:hidden px-4 pb-4 space-y-2 overflow-hidden">
-            <Link to="/" className="block">Home</Link>
-            <Link to="/events" className="block">Events</Link>
-            <Link to={dashboardLink} className="block">Dashboard</Link>
-            <Link to="/about" className="block">About</Link>
-            <Link to="/contact" className="block">Contact</Link>
+            <Link to="/" className="block transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Home</Link>
+            <Link to="/events" className="block transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Events</Link>
+            <Link to={dashboardLink} className="block transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Dashboard</Link>
+            <Link to="/about" className="block transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">About</Link>
+            <Link to="/contact" className="block transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Contact</Link>
             {user ? (
               <>
                 <Link to="/profile" className="block">Profile</Link>

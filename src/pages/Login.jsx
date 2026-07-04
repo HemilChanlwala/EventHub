@@ -99,7 +99,7 @@ const Login = () => {
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-900 z-10 bg-transparent p-1 focus:outline-none"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white z-10 bg-transparent p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 hover:shadow-glow hover:bg-white/10"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               title={showPassword ? 'Hide password' : 'Show password'}
             >

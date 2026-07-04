@@ -31,7 +31,8 @@ const Navbar = () => {
 
   const navClass = `glass-navbar ${scrolled ? 'solid' : ''}`
   const navigate = useNavigate()
-  const { user, logout } = useContext(AuthContext)
+  const { user, profile, logout } = useContext(AuthContext)
+  const role = profile?.role || user?.role || user?.user_metadata?.role || 'attendee'
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
   const dashboardLink = user ? '/dashboard' : '/login'
 
@@ -60,8 +61,8 @@ const Navbar = () => {
             {user ? (
               <>
                 <Link to="/profile">Hi, {displayName}</Link>
-                {user.role === 'organizer' && <Link to="/organizer">Organizer</Link>}
-                {user.role === 'admin' && <Link to="/admin">Admin</Link>}
+                {role === 'organizer' && <Link to="/organizer">Organizer</Link>}
+                {role === 'admin' && <Link to="/admin">Admin</Link>}
                 <button onClick={handleLogout} className="px-3 py-1 border rounded border-theme">Logout</button>
               </>
             ) : (
@@ -88,8 +89,8 @@ const Navbar = () => {
             {user ? (
               <>
                 <Link to="/profile" className="block">Profile</Link>
-                {user.role === 'organizer' && <Link to="/organizer" className="block">Organizer</Link>}
-                {user.role === 'admin' && <Link to="/admin" className="block">Admin</Link>}
+                {role === 'organizer' && <Link to="/organizer" className="block">Organizer</Link>}
+                {role === 'admin' && <Link to="/admin" className="block">Admin</Link>}
                 <button onClick={() => { handleLogout(); setOpen(false) }} className="block text-left">Logout</button>
               </>
             ) : (

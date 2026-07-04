@@ -35,16 +35,16 @@ function App() {
         <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
         <Route path="/register" element={<MainLayout><Register /></MainLayout>} />
         <Route path="/forgot-password" element={<MainLayout><ForgotPassword /></MainLayout>} />
-        <Route path="/create-event" element={<ProtectedRoute><MainLayout><CreateEvent /></MainLayout></ProtectedRoute>} />
+        <Route path="/create-event" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><CreateEvent /></MainLayout></ProtectedRoute>} />
         <Route path="/my-events" element={<ProtectedRoute><MainLayout><MyEvents /></MainLayout></ProtectedRoute>} />
         <Route path="/tickets" element={<ProtectedRoute><MainLayout><Tickets /></MainLayout></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><MainLayout><Notifications /></MainLayout></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
         <Route path="/events/:id/register" element={<MainLayout><RegisterFlow /></MainLayout>} />
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
-        <Route path="/organizer" element={<ProtectedRoute><MainLayout><OrganizerDashboard /></MainLayout></ProtectedRoute>} />
-        <Route path="/organizer/checkin" element={<ProtectedRoute><MainLayout><CheckIn /></MainLayout></ProtectedRoute>} />
-        <Route path="/admin" element={<ProtectedRoute><MainLayout><AdminDashboard /></MainLayout></ProtectedRoute>} />
+        <Route path="/organizer" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><OrganizerDashboard /></MainLayout></ProtectedRoute>} />
+        <Route path="/organizer/checkin" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><CheckIn /></MainLayout></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><MainLayout><AdminDashboard /></MainLayout></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
         <Route path="/ticket/:ticketId" element={<MainLayout><Ticket /></MainLayout>} />
         <Route path="*" element={<MainLayout><Home /></MainLayout>} />

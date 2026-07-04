@@ -5,7 +5,7 @@ import { saveEvent, uploadBanner } from '../services'
 import { notify } from '../utils/notify'
 
 const CreateEvent = () => {
-  const { user } = useContext(AuthContext)
+  const { user, profile } = useContext(AuthContext)
   const navigate = useNavigate()
   const [form, setForm] = useState({
     title: '',
@@ -19,6 +19,19 @@ const CreateEvent = () => {
     description: '',
     banner_url: '',
   })
+  const role = profile?.role || user?.role || user?.user_metadata?.role || 'attendee'
+  const isOrganizer = role === 'organizer'
+
+  if (!isOrganizer) {
+    return (
+      <div className="max-w-3xl mx-auto p-8">
+        <div className="rounded-lg border border-red-500 bg-red-950/60 p-6 text-red-100">
+          <h2 className="text-2xl font-semibold mb-3">Only organizers can create events</h2>
+          <p>Please register as an organizer to create events. If you already registered as an organizer, log out and log back in to refresh your role.</p>
+        </div>
+      </div>
+    )
+  }
   const [bannerFile, setBannerFile] = useState(null)
   const [status, setStatus] = useState('')
   const [submitting, setSubmitting] = useState(false)

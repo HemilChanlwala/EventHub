@@ -1,4 +1,6 @@
+import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import AuthContext from '../context/AuthContext'
 import EventCard from '../components/EventCard'
 import formatDate from '../utils/formatDate'
 import StatsCard from '../components/StatsCard'
@@ -21,6 +23,10 @@ const testimonials = [
 const featuredEvents = []
 
 const Home = () => {
+  const { user, profile } = useContext(AuthContext)
+  const role = profile?.role || user?.role || user?.user_metadata?.role || 'attendee'
+  const isOrganizer = role === 'organizer'
+
   return (
     <div className="max-w-7xl mx-auto p-4">
       <section className="relative overflow-hidden min-h-[70vh] mb-8">
@@ -34,7 +40,9 @@ const Home = () => {
             <p className="mt-4 text-lg md:text-xl text-theme-weak">Find workshops, seminars, concerts and conferences.</p>
             <div className="mt-8 flex gap-4">
               <Link to="/events"><button className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded font-semibold shadow-glow">Explore Events</button></Link>
-              <Link to="/create-event"><button className="px-6 py-3 border border-theme rounded text-theme-weak">Create Event</button></Link>
+              {isOrganizer && (
+                <Link to="/create-event"><button className="px-6 py-3 border border-theme rounded text-theme-weak">Create Event</button></Link>
+              )}
             </div>
           </div>
 

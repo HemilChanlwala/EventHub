@@ -111,6 +111,9 @@ export const saveEvent = async (ev) => {
       }
 
       const { data, error } = await supabase.from('events').insert([payload]).select().single()
+      if (error) {
+        console.error('Supabase saveEvent insert error:', error)
+      }
       if (!error && data) {
         const refreshed = normalizeEvent({ ...data, creator: data.creator || data.organizer_id || normalized.creator })
         const next = [refreshed, ...existing.filter((event) => String(event.id) !== String(data.id))]

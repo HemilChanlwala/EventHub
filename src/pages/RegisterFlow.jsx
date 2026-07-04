@@ -21,6 +21,7 @@ const RegisterFlow = () => {
   const [event, setEvent] = useState(null)
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ name: '', email: '', phone: '' })
+  const [formExtra, setFormExtra] = useState({ college: '', occupation: '', address: '', city: '', state: '', emergencyName: '', emergencyPhone: '', dietary: '', tshirt: '', notes: '' })
   const [ticketType, setTicketType] = useState('Standard')
   const [ticketId, setTicketId] = useState(null)
   const [processing, setProcessing] = useState(false)
@@ -54,6 +55,16 @@ const RegisterFlow = () => {
       name: form.name,
       email: form.email,
       phone: form.phone,
+      college: formExtra.college,
+      occupation: formExtra.occupation,
+      address: formExtra.address,
+      city: formExtra.city,
+      state: formExtra.state,
+      emergencyName: formExtra.emergencyName,
+      emergencyPhone: formExtra.emergencyPhone,
+      dietary: formExtra.dietary,
+      tshirt: formExtra.tshirt,
+      notes: formExtra.notes,
       ticketType,
       price,
       createdAt: new Date().toISOString(),
@@ -112,6 +123,29 @@ const RegisterFlow = () => {
           <div>
             <label className="block text-sm text-gray-300">Phone</label>
             <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full p-3 bg-transparent border border-theme rounded" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input placeholder="College / Company" value={formExtra.college} onChange={(e)=>setFormExtra({...formExtra, college: e.target.value})} className="p-3 bg-transparent border border-theme rounded" />
+            <input placeholder="Occupation" value={formExtra.occupation} onChange={(e)=>setFormExtra({...formExtra, occupation: e.target.value})} className="p-3 bg-transparent border border-theme rounded" />
+            <input placeholder="Address" value={formExtra.address} onChange={(e)=>setFormExtra({...formExtra, address: e.target.value})} className="col-span-1 md:col-span-2 p-3 bg-transparent border border-theme rounded" />
+            <input placeholder="City" value={formExtra.city} onChange={(e)=>setFormExtra({...formExtra, city: e.target.value})} className="p-3 bg-transparent border border-theme rounded" />
+            <input placeholder="State" value={formExtra.state} onChange={(e)=>setFormExtra({...formExtra, state: e.target.value})} className="p-3 bg-transparent border border-theme rounded" />
+            <input placeholder="Emergency contact name" value={formExtra.emergencyName} onChange={(e)=>setFormExtra({...formExtra, emergencyName: e.target.value})} className="p-3 bg-transparent border border-theme rounded" />
+            <input placeholder="Emergency contact phone" value={formExtra.emergencyPhone} onChange={(e)=>setFormExtra({...formExtra, emergencyPhone: e.target.value})} className="p-3 bg-transparent border border-theme rounded" />
+            <select value={formExtra.dietary} onChange={(e)=>setFormExtra({...formExtra, dietary: e.target.value})} className="p-3 bg-transparent border border-theme rounded">
+              <option value="">Dietary preference</option>
+              <option value="None">None</option>
+              <option value="Vegetarian">Vegetarian</option>
+              <option value="Vegan">Vegan</option>
+            </select>
+            <select value={formExtra.tshirt} onChange={(e)=>setFormExtra({...formExtra, tshirt: e.target.value})} className="p-3 bg-transparent border border-theme rounded">
+              <option value="">T-Shirt size</option>
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+            </select>
+            <textarea placeholder="Notes" value={formExtra.notes} onChange={(e)=>setFormExtra({...formExtra, notes: e.target.value})} className="col-span-1 md:col-span-2 p-3 bg-transparent border border-theme rounded" />
           </div>
           <div className="flex justify-end">
             <button className="px-4 py-2 bg-indigo-600 text-white rounded">Next</button>

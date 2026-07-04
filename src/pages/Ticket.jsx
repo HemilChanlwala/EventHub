@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { generateCertificate } from '../utils/generateCertificate'
+import { generateTicketPdf, downloadCalendarInvite } from '../utils/ticketUtils'
 
 const Ticket = () => {
   const { ticketId } = useParams()
@@ -32,8 +33,19 @@ const Ticket = () => {
           <div>
             <div className="text-sm">Type: {reg.ticketType}</div>
             <div className="text-sm">Price: {reg.price}</div>
-            <div className="mt-4 space-x-2">
+            <div className="mt-4 flex flex-wrap gap-2">
               <button onClick={() => generateCertificate(reg)} className="px-4 py-2 bg-indigo-600 text-white rounded">Download Certificate</button>
+              <button onClick={() => generateTicketPdf({
+                ...reg,
+                eventDate: reg.date || reg.eventDate,
+                eventLocation: reg.location || reg.eventLocation,
+                eventDescription: reg.description || reg.eventDescription,
+              })} className="px-4 py-2 bg-slate-700 text-white rounded">Download Ticket PDF</button>
+              <button onClick={() => downloadCalendarInvite({
+                ...reg,
+                eventDate: reg.date || reg.eventDate,
+                eventLocation: reg.location || reg.eventLocation,
+              })} className="px-4 py-2 border rounded">Add to Calendar</button>
               <button onClick={() => navigate('/dashboard')} className="px-4 py-2 border rounded">Back</button>
             </div>
           </div>

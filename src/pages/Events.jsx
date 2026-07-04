@@ -9,6 +9,7 @@ const Events = () => {
   const [location, setLocation] = useState('')
   const [date, setDate] = useState('')
   const [priceFilter, setPriceFilter] = useState('All')
+  const [sortBy, setSortBy] = useState('latest')
   const [events, setEvents] = useState([])
   const [page, setPage] = useState(1)
   const pageSize = 6
@@ -38,11 +39,28 @@ const Events = () => {
     })
   }, [events, query, category, location, date, priceFilter])
 
+  const sorted = useMemo(() => {
+    const copy = [...filtered]
+    switch (sortBy) {
+      case 'oldest':
+        return copy.sort((a, b) => new Date(a.date) - new Date(b.date))
+      case 'price-asc':
+        return copy.sort((a, b) => (parseFloat(String(a.price).replace(/[^0-9.]/g, '')) || 0) - (parseFloat(String(b.price).replace(/[^0-9.]/g, '')) || 0))
+      case 'price-desc':
+        return copy.sort((a, b) => (parseFloat(String(b.price).replace(/[^0-9.]/g, '')) || 0) - (parseFloat(String(a.price).replace(/[^0-9.]/g, '')) || 0))
+      case 'popular':
+        return copy.sort((a, b) => (Number(b.attendees || b.seats || 0) - Number(a.attendees || a.seats || 0)))
+      case 'latest':
+      default:
+        return copy.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    }
+  }, [filtered, sortBy])
+
   return (
     <div className="max-w-7xl mx-auto p-8">
       <h2 className="text-3xl font-semibold mb-4">Events</h2>
       <div className="py-4">
-        <div className="glass p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="glass p-4 grid grid-cols-1 md:grid-cols-5 gap-4">
           <input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1) }} placeholder="Search events" className="w-full md:col-span-2 p-3 bg-transparent border border-theme rounded text-theme" />
           <input value={location} onChange={(e) => { setLocation(e.target.value); setPage(1) }} placeholder="Location" className="w-full p-3 bg-transparent border border-theme rounded text-theme" />
           <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1) }} className="p-3 bg-transparent border border-theme rounded text-theme">
@@ -56,6 +74,13 @@ const Events = () => {
               <option value="Paid">Paid</option>
             </select>
           </div>
+          <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1) }} className="p-2 bg-transparent border border-theme rounded text-theme">
+            <option value="latest">Latest</option>
+            <option value="oldest">Oldest</option>
+            <option value="price-asc">Price Low → High</option>
+            <option value="price-desc">Price High → Low</option>
+            <option value="popular">Most Popular</option>
+          </select>
         </div>
       </div>
 
@@ -63,7 +88,7 @@ const Events = () => {
         {filtered.length === 0 ? (
           <div className="col-span-full text-center py-12 text-theme-weak">No events found.</div>
         ) : (
-          filtered.slice((page - 1) * pageSize, page * pageSize).map((e) => (
+          sorted.slice((page - 1) * pageSize, page * pageSize).map((e) => (
             <EventCard key={e.id} id={e.id} title={e.title} date={formatDate(e.date)} location={e.location} price={e.price} image={e.image} />
           ))
         )}

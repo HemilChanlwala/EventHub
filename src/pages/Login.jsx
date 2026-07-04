@@ -44,6 +44,7 @@ const Login = () => {
   return (
     <div className="max-w-md mx-auto p-8">
       <h2 className="text-2xl font-semibold mb-4">Login</h2>
+      <p className="text-sm text-theme-weak mb-6">Sign in with your attendee or organizer account.</p>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         {error && (

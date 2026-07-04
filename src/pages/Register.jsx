@@ -13,7 +13,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [role, setRole] = useState('user')
+  const [role, setRole] = useState('attendee')
   const [remember, setRemember] = useState(true)
   const [error, setError] = useState('')
 
@@ -197,7 +197,7 @@ const Register = () => {
             }
             className="p-2 border rounded"
           >
-            <option value="user">
+            <option value="attendee">
               User
             </option>
             <option value="organizer">

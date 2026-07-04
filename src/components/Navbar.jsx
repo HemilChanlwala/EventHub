@@ -34,6 +34,7 @@ const Navbar = () => {
   const { user, profile, logout } = useContext(AuthContext)
   const role = profile?.role || user?.role || user?.user_metadata?.role || 'attendee'
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
+  const roleLabel = role === 'organizer' ? 'Organizer' : role === 'admin' ? 'Admin' : 'User'
   const dashboardLink = user ? '/dashboard' : '/login'
 
   const handleLogout = async () => {
@@ -60,7 +61,10 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                <Link to="/profile">Hi, {displayName}</Link>
+                <Link to="/profile" className="flex items-center gap-2">
+                  <span>Hi, {displayName}</span>
+                  <span className="text-xs px-2 py-1 rounded bg-white/10 text-theme-weak">{roleLabel}</span>
+                </Link>
                 {role === 'organizer' && <Link to="/organizer">Organizer</Link>}
                 {role === 'admin' && <Link to="/admin">Admin</Link>}
                 <button onClick={handleLogout} className="px-3 py-1 border rounded border-theme">Logout</button>
@@ -88,6 +92,7 @@ const Navbar = () => {
             <Link to="/contact" className="block transition duration-200 hover:text-white hover:bg-white/10 hover:shadow-glow rounded-md px-2 py-1">Contact</Link>
             {user ? (
               <>
+                <div className="block px-2 py-1 text-theme-weak">Signed in as {displayName} • {roleLabel}</div>
                 <Link to="/profile" className="block">Profile</Link>
                 {role === 'organizer' && <Link to="/organizer" className="block">Organizer</Link>}
                 {role === 'admin' && <Link to="/admin" className="block">Admin</Link>}

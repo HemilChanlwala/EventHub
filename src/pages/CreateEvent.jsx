@@ -9,18 +9,37 @@ const CreateEvent = () => {
   const navigate = useNavigate()
   const [form, setForm] = useState({
     title: '',
-    date: '',
-    time: '',
+    short_description: '',
+    description: '',
+    full_description: '',
+    category: '',
     venue: '',
     city: '',
-    price: '',
-    category: '',
+    state: '',
+    country: '',
+    start_date: '',
+    end_date: '',
+    start_time: '',
+    end_time: '',
+    registration_deadline: '',
     capacity: 100,
-    description: '',
+    ticket_type: 'general',
+    price: '',
+    tags: '',
+    organizer_name: '',
+    contact_email: '',
+    contact_phone: '',
+    website: '',
+    facebook: '',
+    instagram: '',
     banner_url: '',
   })
   const role = profile?.role || user?.role || user?.user_metadata?.role || 'attendee'
   const isOrganizer = role === 'organizer'
+  const [bannerFile, setBannerFile] = useState(null)
+  const [status, setStatus] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState('')
 
   if (!isOrganizer) {
     return (
@@ -32,9 +51,6 @@ const CreateEvent = () => {
       </div>
     )
   }
-  const [bannerFile, setBannerFile] = useState(null)
-  const [status, setStatus] = useState('')
-  const [submitting, setSubmitting] = useState(false)
 
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
 
@@ -78,32 +94,70 @@ const CreateEvent = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input value={form.title} onChange={(e) => handleChange('title', e.target.value)} placeholder="Event title" className="w-full p-3 border rounded" required />
-          <input value={form.date} onChange={(e) => handleChange('date', e.target.value)} type="date" className="w-full p-3 border rounded" required />
+          <input value={form.start_date} onChange={(e) => handleChange('start_date', e.target.value)} type="date" className="w-full p-3 border rounded" required />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input value={form.time} onChange={(e) => handleChange('time', e.target.value)} type="time" className="w-full p-3 border rounded" />
+          <input value={form.start_time} onChange={(e) => handleChange('start_time', e.target.value)} type="time" className="w-full p-3 border rounded" />
+          <input value={form.end_date} onChange={(e) => handleChange('end_date', e.target.value)} type="date" className="w-full p-3 border rounded" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input value={form.venue} onChange={(e) => handleChange('venue', e.target.value)} placeholder="Venue" className="w-full p-3 border rounded" required />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input value={form.city} onChange={(e) => handleChange('city', e.target.value)} placeholder="City" className="w-full p-3 border rounded" />
-          <input value={form.price} onChange={(e) => handleChange('price', e.target.value)} placeholder="Price (e.g. Free or $49)" className="w-full p-3 border rounded" />
+          <input value={form.state} onChange={(e) => handleChange('state', e.target.value)} placeholder="State" className="w-full p-3 border rounded" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input value={form.country} onChange={(e) => handleChange('country', e.target.value)} placeholder="Country" className="w-full p-3 border rounded" />
           <input value={form.category} onChange={(e) => handleChange('category', e.target.value)} placeholder="Category" className="w-full p-3 border rounded" />
           <input value={form.capacity} onChange={(e) => handleChange('capacity', e.target.value)} type="number" min="1" placeholder="Capacity" className="w-full p-3 border rounded" />
         </div>
 
-        <textarea value={form.description} onChange={(e) => handleChange('description', e.target.value)} placeholder="Description" className="w-full p-3 border rounded h-40" />
-
-        <div className="space-y-2">
-          <label className="block text-sm">Banner image</label>
-          <input type="file" accept="image/*" onChange={(e) => setBannerFile(e.target.files?.[0] || null)} className="w-full p-3 border rounded" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input value={form.ticket_type} onChange={(e) => handleChange('ticket_type', e.target.value)} placeholder="Ticket Type (general, vip)" className="w-full p-3 border rounded" />
+          <input value={form.price} onChange={(e) => handleChange('price', e.target.value)} placeholder="Price (e.g. Free or $49)" className="w-full p-3 border rounded" />
         </div>
 
-        <button type="submit" disabled={submitting} className="w-full px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60">{submitting ? 'Creating...' : 'Create Event'}</button>
+        <textarea value={form.short_description} onChange={(e) => handleChange('short_description', e.target.value)} placeholder="Short description" className="w-full p-3 border rounded h-24" />
+        <textarea value={form.full_description} onChange={(e) => handleChange('full_description', e.target.value)} placeholder="Full description" className="w-full p-3 border rounded h-40" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input value={form.registration_deadline} onChange={(e) => handleChange('registration_deadline', e.target.value)} type="date" placeholder="Registration deadline" className="w-full p-3 border rounded" />
+          <input value={form.tags} onChange={(e) => handleChange('tags', e.target.value)} placeholder="Tags (comma separated)" className="w-full p-3 border rounded" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input value={form.organizer_name} onChange={(e) => handleChange('organizer_name', e.target.value)} placeholder="Organizer name" className="w-full p-3 border rounded" />
+          <input value={form.contact_email} onChange={(e) => handleChange('contact_email', e.target.value)} type="email" placeholder="Contact email" className="w-full p-3 border rounded" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input value={form.contact_phone} onChange={(e) => handleChange('contact_phone', e.target.value)} placeholder="Contact phone" className="w-full p-3 border rounded" />
+          <input value={form.website} onChange={(e) => handleChange('website', e.target.value)} placeholder="Website" className="w-full p-3 border rounded" />
+          <input value={form.facebook} onChange={(e) => handleChange('facebook', e.target.value)} placeholder="Facebook link" className="w-full p-3 border rounded" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input value={form.instagram} onChange={(e) => handleChange('instagram', e.target.value)} placeholder="Instagram link" className="w-full p-3 border rounded" />
+          <div className="space-y-2">
+            <label className="block text-sm">Banner image</label>
+            <input type="file" accept="image/*" onChange={(e) => {
+              const file = e.target.files?.[0] || null
+              setBannerFile(file)
+              if (file) setPreviewUrl(URL.createObjectURL(file))
+            }} className="w-full p-3 border rounded" />
+          </div>
+        </div>
+
+        {previewUrl && (
+          <div className="mt-2">
+            <div className="text-sm text-gray-400">Preview</div>
+            <img src={previewUrl} alt="preview" className="w-full h-48 object-cover rounded mt-2" />
+          </div>
+        )}
+
+        <button type="submit" disabled={submitting} className="w-full px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-60">{submitting ? 'Publishing...' : 'Publish Event'}</button>
       </form>
 
       {status && <div className="mt-4 p-3 bg-white/5 border border-theme rounded text-theme">{status}</div>}

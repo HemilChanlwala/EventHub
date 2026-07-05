@@ -4,7 +4,7 @@ import { saveUser } from '../services'
 import { notify } from '../utils/notify'
 
 const Profile = () => {
-  const { user, login } = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
   const [name, setName] = useState(user?.name || '')
   const [email, setEmail] = useState(user?.email || '')
   const [phone, setPhone] = useState(user?.phone || '')
@@ -13,7 +13,6 @@ const Profile = () => {
     const updated = { ...user, name, email, phone }
     try {
       saveUser(updated)
-      login(updated, true)
       notify('Profile saved', 'success')
     } catch (err) { console.warn('profile save', err); notify('Failed to save', 'error') }
   }

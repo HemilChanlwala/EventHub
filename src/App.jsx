@@ -12,6 +12,8 @@ import Register from './pages/Register'
 import RegisterFlow from './pages/RegisterFlow'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
+import MyEvents from './pages/MyEvents'
+import Tickets from './pages/Tickets'
 import OrganizerDashboard from './pages/OrganizerDashboard'
 import CheckIn from './pages/CheckIn'
 import AdminDashboard from './pages/AdminDashboard'
@@ -39,8 +41,9 @@ function App() {
         <Route path="/register" element={<MainLayout><Register /></MainLayout>} />
         <Route path="/events/:id/register" element={<MainLayout><RegisterFlow /></MainLayout>} />
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
-        <Route path="/organizer" element={<ProtectedRoute><MainLayout><OrganizerDashboard /></MainLayout></ProtectedRoute>} />
-        <Route path="/organizer/checkin" element={<ProtectedRoute><MainLayout><CheckIn /></MainLayout></ProtectedRoute>} />
+        <Route path="/my-events" element={<ProtectedRoute><MainLayout><MyEvents /></MainLayout></ProtectedRoute>} />
+        <Route path="/tickets" element={<ProtectedRoute><MainLayout><Tickets /></MainLayout></ProtectedRoute>} />
+        <Route path="/organizer/checkin" element={<MainLayout><CheckIn /></MainLayout>} />
         <Route path="/admin" element={<ProtectedRoute><MainLayout><AdminDashboard /></MainLayout></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
         <Route path="/ticket/:ticketId" element={<MainLayout><Ticket /></MainLayout>} />

@@ -82,7 +82,6 @@ const Navbar = () => {
             {user ? (
               <>
                 <Link to="/profile" className="block">Profile</Link>
-                {user.role === 'organizer' && <Link to="/organizer" className="block">Organizer</Link>}
                 {user.role === 'admin' && <Link to="/admin" className="block">Admin</Link>}
                 <button onClick={() => { logout(); setOpen(false) }} className="block text-left">Logout</button>
               </>

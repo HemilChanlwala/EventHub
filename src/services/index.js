@@ -1,4 +1,6 @@
 import { supabase } from '../lib/supabase'
+import { createEvent } from './eventService'
+import * as storageService from './storageService'
 
 const STORAGE_KEY = 'eventhub_events'
 const REGISTRATIONS_KEY = 'eventhub_registrations'
@@ -121,46 +123,13 @@ export const getEvents = async (useSupabase = false) => {
   return []
 }
 
-export const saveEvent = async (ev) => {
-  const normalized = normalizeEvent({ ...ev, creator: ev.creator || ev.organizer_id || ev.organizerId || 'guest' })
-  const existing = readLocalEvents()
-  const merged = [normalized, ...existing.filter((event) => String(event.id) !== String(normalized.id))]
-  writeLocalEvents(merged)
-  // POST to server API which will insert into Supabase
-  try {
-    const res = await fetch('/api/events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...ev, ...normalized }),
-    })
-    if (res.ok || res.status === 201) {
-      const data = await res.json()
-      const refreshed = normalizeEvent({ ...data, creator: data.creator || data.organizer_id || normalized.creator })
-      const next = [refreshed, ...existing.filter((event) => String(event.id) !== String(data.id))]
-      writeLocalEvents(next)
-      return refreshed
-    }
-  } catch (err) {
-    console.warn('saveEvent to /api/events failed', err)
-  }
-
-  return normalized
+export async function saveEvent(eventData) {
+  return await createEvent(eventData)
 }
 
 export const uploadBanner = async (file) => {
   if (!file) return null
-
-  try {
-    const fd = new FormData()
-    fd.append('file', file)
-    const res = await fetch('/api/upload', { method: 'POST', body: fd })
-    if (!res.ok) throw new Error('Upload failed')
-    const json = await res.json()
-    return json?.publicUrl || null
-  } catch (err) {
-    console.warn('uploadBanner failed', err)
-    return null
-  }
+  return storageService.uploadBanner(file)
 }
 
 export const saveRegistration = async (registration) => {

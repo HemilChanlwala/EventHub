@@ -22,7 +22,8 @@ import Tickets from './pages/Tickets'
 import Notifications from './pages/Notifications'
 import Settings from './pages/Settings'
 import './App.css'
-
+import { useEffect } from "react";
+import { supabase } from "./lib/supabase";
 function App() {
   return (
     <Router>

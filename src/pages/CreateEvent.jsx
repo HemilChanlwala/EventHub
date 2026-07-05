@@ -64,13 +64,24 @@ const CreateEvent = () => {
       }
 
       await saveEvent({
-        ...form,
-        image: bannerUrl || form.banner_url,
-        banner_url: bannerUrl || form.banner_url,
-        organizer_id: user?.id || 'guest',
-        creator: user?.id || 'guest',
-        capacity: Number(form.capacity) || 0,
-        price: form.price || 'Free',
+        organizer_id: user.id,
+        title: form.title,
+        short_description: form.short_description,
+        description: form.full_description,
+        category: form.category,
+        event_type: form.ticket_type || 'General',
+        venue: form.venue,
+        city: form.city,
+        state: form.state,
+        country: 'India',
+        start_date: form.start_date,
+        end_date: form.end_date,
+        start_time: form.start_time,
+        end_time: form.end_time,
+        capacity: Number(form.capacity),
+        price: Number(form.price) || 0,
+        banner_url: bannerUrl,
+        status: 'Upcoming',
       })
 
       setStatus('Event created successfully. You can view it on the Events page.')

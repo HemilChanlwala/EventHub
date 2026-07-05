@@ -1,9 +1,9 @@
-import { useState, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
-import AuthContext from '../context/AuthContext'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../context/AuthContext'
 
 const Login = () => {
-  const { login, loginWithGoogle } =useContext(AuthContext)
+  const { login, loginWithGoogle } = useAuthContext()
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
@@ -16,14 +16,20 @@ const Login = () => {
     e.preventDefault()
     setError('')
 
-    const { error } = await login(email, password)
+    const result = await login(email, password)
 
-    if (error) {
-      setError(error.message)
+    if (!result.success) {
+      setError(result.error)
       return
     }
 
-    navigate('/dashboard')
+    if (result.role === 'organizer') {
+      navigate('/organizer')
+    } else if (result.role === 'admin') {
+      navigate('/admin')
+    } else {
+      navigate('/dashboard')
+    }
   }
 
   const handleGoogle = async () => {
@@ -38,6 +44,7 @@ const Login = () => {
   return (
     <div className="max-w-md mx-auto p-8">
       <h2 className="text-2xl font-semibold mb-4">Login</h2>
+      <p className="text-sm text-theme-weak mb-6">Sign in with your attendee or organizer account.</p>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         {error && (
@@ -76,26 +83,39 @@ const Login = () => {
             Password
           </label>
 
-          <input
-            id="login-password"
-            type={showPassword ? 'text' : 'password'}
-            aria-label="Password"
-            value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
-            placeholder="Password"
-            className="w-full p-3 border rounded"
-            required
-          />
-          <div className="mt-2 flex justify-end">
+          <div className="relative">
+            <input
+              id="login-password"
+              type={showPassword ? 'text' : 'password'}
+              aria-label="Password"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+              placeholder="Password"
+              className="w-full p-3 border rounded pr-10"
+              required
+            />
+
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="text-sm text-indigo-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white z-10 bg-transparent p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 hover:shadow-glow hover:bg-white/10"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
+              title={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? 'Hide password' : 'Show password'}
+              {showPassword ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-5 0-9.27-3-11-8 1.04-2.6 2.8-4.73 4.9-6.08" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M1 1l22 22" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M9.88 9.88A3 3 0 0 0 14.12 14.12" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -112,12 +132,12 @@ const Login = () => {
             Remember me
           </label>
 
-          <a
-            href="#"
-            className="text-sm text-indigo-600"
+          <Link
+            to="/forgot-password"
+            className="text-sm text-indigo-600 hover:underline"
           >
             Forgot?
-          </a>
+          </Link>
         </div>
 
         <button

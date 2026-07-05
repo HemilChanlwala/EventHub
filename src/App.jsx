@@ -1,7 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useContext } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
-import AuthContext from './context/AuthContext'
+import ProtectedRoute from './routes/ProtectedRoute'
 import Home from './pages/Home'
 import Events from './pages/Events'
 import EventDetails from './pages/EventDetails'
@@ -18,16 +17,16 @@ import OrganizerDashboard from './pages/OrganizerDashboard'
 import CheckIn from './pages/CheckIn'
 import AdminDashboard from './pages/AdminDashboard'
 import Ticket from './pages/Ticket'
+import ForgotPassword from './pages/ForgotPassword'
+import CreateEvent from './pages/CreateEvent'
+import MyEvents from './pages/MyEvents'
+import Tickets from './pages/Tickets'
+import Notifications from './pages/Notifications'
+import Settings from './pages/Settings'
 import './App.css'
-
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useContext(AuthContext)
-
-  if (loading) return null
-
-  return user ? children : <Navigate to="/login" replace />
-}
-
+import { useEffect } from "react";
+import { supabase } from "./lib/supabase";
+import EditEvent from "./pages/EditEvent";
 function App() {
   return (
     <Router>
@@ -39,16 +38,48 @@ function App() {
         <Route path="/contact" element={<MainLayout><Contact /></MainLayout>} />
         <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
         <Route path="/register" element={<MainLayout><Register /></MainLayout>} />
+        <Route path="/forgot-password" element={<MainLayout><ForgotPassword /></MainLayout>} />
+        <Route path="/create-event" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><CreateEvent /></MainLayout></ProtectedRoute>} />
+        <Route path="/my-events" element={<ProtectedRoute><MainLayout><MyEvents /></MainLayout></ProtectedRoute>} />
+        <Route path="/tickets" element={<ProtectedRoute><MainLayout><Tickets /></MainLayout></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><MainLayout><Notifications /></MainLayout></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
         <Route path="/events/:id/register" element={<MainLayout><RegisterFlow /></MainLayout>} />
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
+<<<<<<< HEAD
         <Route path="/my-events" element={<ProtectedRoute><MainLayout><MyEvents /></MainLayout></ProtectedRoute>} />
         <Route path="/tickets" element={<ProtectedRoute><MainLayout><Tickets /></MainLayout></ProtectedRoute>} />
         <Route path="/organizer/checkin" element={<MainLayout><CheckIn /></MainLayout>} />
         <Route path="/admin" element={<ProtectedRoute><MainLayout><AdminDashboard /></MainLayout></ProtectedRoute>} />
+=======
+        <Route path="/organizer" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><OrganizerDashboard /></MainLayout></ProtectedRoute>} />
+        <Route path="/organizer/checkin" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><CheckIn /></MainLayout></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><MainLayout><AdminDashboard /></MainLayout></ProtectedRoute>} />
+>>>>>>> 0f19eb8170bee855413ca446d0c70e85c092e0b9
         <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
         <Route path="/ticket/:ticketId" element={<MainLayout><Ticket /></MainLayout>} />
         <Route path="*" element={<MainLayout><Home /></MainLayout>} />
-      </Routes>
+        <Route
+          path="/edit-event/:id"
+          element={
+            <ProtectedRoute allowedRoles={['organizer']}>
+              <MainLayout>
+                <EditEvent />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-event/:id"
+          element={
+            <ProtectedRoute allowedRoles={['organizer']}>
+              <MainLayout>
+                <CreateEvent />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>   
     </Router>
   )
 }

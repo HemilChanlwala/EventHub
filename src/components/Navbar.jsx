@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import AuthContext from '../context/AuthContext'
 
@@ -30,9 +30,17 @@ const Navbar = () => {
   }, [])
 
   const navClass = `glass-navbar ${scrolled ? 'solid' : ''}`
-  const { user, logout } = useContext(AuthContext)
+  const navigate = useNavigate()
+  const { user, profile, logout } = useContext(AuthContext)
+  const role = profile?.role || user?.role || user?.user_metadata?.role || 'attendee'
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
+  const roleLabel = role === 'organizer' ? 'Organizer' : role === 'admin' ? 'Admin' : 'User'
   const dashboardLink = user ? '/dashboard' : '/login'
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
 
   return (
     <nav className={navClass}>

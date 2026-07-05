@@ -24,6 +24,7 @@ import Settings from './pages/Settings'
 import './App.css'
 import { useEffect } from "react";
 import { supabase } from "./lib/supabase";
+import EditEvent from "./pages/EditEvent";
 function App() {
   return (
     <Router>
@@ -49,7 +50,27 @@ function App() {
         <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
         <Route path="/ticket/:ticketId" element={<MainLayout><Ticket /></MainLayout>} />
         <Route path="*" element={<MainLayout><Home /></MainLayout>} />
-      </Routes>
+        <Route
+          path="/edit-event/:id"
+          element={
+            <ProtectedRoute allowedRoles={['organizer']}>
+              <MainLayout>
+                <EditEvent />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-event/:id"
+          element={
+            <ProtectedRoute allowedRoles={['organizer']}>
+              <MainLayout>
+                <CreateEvent />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>   
     </Router>
   )
 }

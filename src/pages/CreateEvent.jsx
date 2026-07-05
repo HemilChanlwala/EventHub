@@ -1,17 +1,27 @@
-import { useState, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
-import AuthContext from '../context/AuthContext'
-import { saveEvent, uploadBanner } from '../services'
-import { notify } from '../utils/notify'
+import { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import AuthContext from "../context/AuthContext";
+import { saveEvent, uploadBanner } from "../services";
+
+import {
+  getEventById,
+  updateEvent,
+} from "../services/eventService";
+
+import { notify } from "../utils/notify";
+
 
 const CreateEvent = () => {
+
   const { user, profile } = useContext(AuthContext)
   const navigate = useNavigate()
+  const { id } = useParams();
+  const isEdit = Boolean(id);
   const [form, setForm] = useState({
     title: '',
     short_description: '',
     description: '',
-    full_description: '',
     category: '',
     venue: '',
     city: '',
@@ -22,7 +32,7 @@ const CreateEvent = () => {
     end_time: '',
     registration_deadline: '',
     capacity: '',
-    ticket_type: '',
+    event_type: '',
     price: '',
     tags: '',
     organizer_name: '',
@@ -52,10 +62,81 @@ const CreateEvent = () => {
   }
 
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
+  useEffect(() => {
+    if (!isEdit) return;
 
-  const handleSubmit = async (event) => {
+    const loadEvent = async () => {
+      try {
+        const event = await getEventById(id);
+
+        setForm({
+          title: event.title || "",
+          short_description: event.short_description || "",
+          description: event.description || "",
+          category: event.category || "",
+          venue: event.venue || "",
+          city: event.city || "",
+          state: event.state || "",
+          start_date: event.start_date || "",
+          end_date: event.end_date || "",
+          start_time: event.start_time || "",
+          end_time: event.end_time || "",
+          capacity: event.capacity || "",
+          event_type: event.event_type || "",
+          price: event.price || "",
+          banner_url: event.banner_url || "",
+        });
+
+        if (event.banner_url) {
+          setPreviewUrl(event.banner_url);
+        }
+      } catch (err) {
+        console.error(err);
+        notify("Unable to load event", "error");
+      }
+    };
+
+    loadEvent();
+  }, [id]);
+  const handleSubmit = async (e) => {
     event.preventDefault()
     setSubmitting(true)
+    useEffect(() => {
+      if (!isEdit) return;
+
+      const loadEvent = async () => {
+        try {
+          const event = await getEventById(id);
+
+          setForm({
+            title: event.title || "",
+            short_description: event.short_description || "",
+            description: event.description || "",
+            category: event.category || "",
+            venue: event.venue || "",
+            city: event.city || "",
+            state: event.state || "",
+            start_date: event.start_date || "",
+            end_date: event.end_date || "",
+            start_time: event.start_time || "",
+            end_time: event.end_time || "",
+            capacity: event.capacity || "",
+            event_type: event.event_type || "",
+            price: event.price || "",
+            banner_url: event.banner_url || "",
+          });
+
+          if (event.banner_url) {
+            setPreviewUrl(event.banner_url);
+          }
+        } catch (err) {
+          console.error(err);
+          notify("Unable to load event", "error");
+        }
+      };
+
+      loadEvent();
+    }, [id]);
 
     try {
       let bannerUrl = form.banner_url
@@ -63,17 +144,17 @@ const CreateEvent = () => {
         bannerUrl = await uploadBanner(bannerFile)
       }
 
-      await saveEvent({
+      const eventData = {
         organizer_id: user.id,
         title: form.title,
         short_description: form.short_description,
-        description: form.full_description,
+        description: form.description,
         category: form.category,
-        event_type: form.ticket_type || 'General',
+        event_type: form.event_type || "General",
         venue: form.venue,
         city: form.city,
         state: form.state,
-        country: 'India',
+        country: "India",
         start_date: form.start_date,
         end_date: form.end_date,
         start_time: form.start_time,
@@ -81,12 +162,20 @@ const CreateEvent = () => {
         capacity: Number(form.capacity),
         price: Number(form.price) || 0,
         banner_url: bannerUrl,
-        status: 'Upcoming',
-      })
+        status: "Upcoming",
+      };
+
+      if (isEdit) {
+        await updateEvent(id, eventData);
+        notify("Event updated", "success");
+      } else {
+        await saveEvent(eventData);
+        notify("Event created", "success");
+      }
 
       setStatus('Event created successfully. You can view it on the Events page.')
       notify('Event created', 'success')
-      navigate('/events')
+      navigate("/my-events");
     } catch (err) {
       console.warn(err)
       setStatus('Unable to create the event right now.')
@@ -99,7 +188,9 @@ const CreateEvent = () => {
   return (
     <div className="max-w-4xl mx-auto p-8">
       <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold mb-2">Create Event</h2>
+        <h2>
+          {isEdit ? "Edit Event" : "Create Event"}
+        </h2>
         <p className="text-gray-400">Create a new event and make it discoverable on the Events page.</p>
       </div>
 
@@ -142,8 +233,8 @@ const CreateEvent = () => {
             <label className="space-y-2 text-sm">
               <span className="text-gray-300">Full Description</span>
               <textarea
-                value={form.full_description}
-                onChange={(e) => handleChange('full_description', e.target.value)}
+                value={form.description}
+                onChange={(e) => handleChange('description', e.target.value)}
                 placeholder="Describe the event in detail"
                 rows={6}
                 className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-white placeholder:text-zinc-500"
@@ -283,8 +374,8 @@ const CreateEvent = () => {
             <label className="space-y-2 text-sm">
               <span className="text-gray-300">Event Type</span>
               <input
-                value={form.ticket_type}
-                onChange={(e) => handleChange('ticket_type', e.target.value)}
+                value={form.event_type}
+                onChange={(e) => handleChange('event_type', e.target.value)}
                 placeholder="General, VIP, Free"
                 className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-white placeholder:text-zinc-500"
               />
@@ -405,11 +496,17 @@ const CreateEvent = () => {
         </section>
 
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <button type="button" onClick={() => navigate('/events')} className="rounded-xl border border-zinc-700 px-5 py-3 text-sm text-zinc-200">
+          <button type="button" onClick={() => navigate("/my-events")} className="rounded-xl border border-zinc-700 px-5 py-3 text-sm text-zinc-200">
             Cancel
           </button>
           <button type="submit" disabled={submitting} className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-60">
-            {submitting ? 'Publishing...' : 'Create Event'}
+            {submitting
+              ? isEdit
+                ? "Updating..."
+                : "Publishing..."
+              : isEdit
+                ? "Update Event"
+                : "Create Event"}
           </button>
         </div>
       </form>

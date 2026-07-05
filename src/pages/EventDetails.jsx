@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { getEvents } from '../services'
+import { useEffect, useState, useContext } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { getEvents, deleteEvent } from '../services'
+import AuthContext from '../context/AuthContext'
+import { notify } from '../utils/notify'
 import formatDate from '../utils/formatDate'
 
 const EventDetails = () => {
   const { id } = useParams()
   const [event, setEvent] = useState(null)
+  const { user } = useContext(AuthContext)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const load = async () => {
@@ -15,6 +19,19 @@ const EventDetails = () => {
     }
     load()
   }, [id])
+
+  const handleDelete = async (eventId) => {
+    const confirmed = window.confirm('Are you sure you want to delete this event?')
+    if (!confirmed) return
+    try {
+      await deleteEvent(eventId)
+      notify('Event deleted', 'success')
+      navigate('/events')
+    } catch (err) {
+      console.error(err)
+      notify('Failed to delete event', 'error')
+    }
+  }
 
   if (!event) return <div className="p-8">Event not found.</div>
 
@@ -75,7 +92,12 @@ const EventDetails = () => {
           <div className="text-lg">{event.capacity || event.seats || 0}</div>
         </div>
 
-        <Link to={`/events/${event.id}/register`} className="mt-6 w-full inline-block text-center px-4 py-2 bg-indigo-600 text-white rounded">Register</Link>
+        <div className="space-y-3">
+          <Link to={`/events/${event.id}/register`} className="mt-6 w-full inline-block text-center px-4 py-2 bg-indigo-600 text-white rounded">Register</Link>
+          {(user && (String(user.id) === String(event.organizer_id) || String(user.id) === String(event.creator))) && (
+            <button onClick={() => handleDelete(event.id)} className="mt-2 w-full inline-block text-center px-4 py-2 bg-red-600 text-white rounded">Delete</button>
+          )}
+        </div>
       </aside>
     </div>
   )

@@ -46,7 +46,7 @@ const OrganizerDashboard = () => {
   const revenue = myEvents.reduce((sum, e) => {
     try {
       const p = typeof e.price === 'string' ? parseFloat(String(e.price).replace(/[^0-9.]/g, '')) || 0 : Number(e.price) || 0
-      const seats = Number(e.seats) || 0
+      const seats = Number(e.capacity || e.seats) || 0
       return sum + p * seats
     } catch { return sum }
   }, 0)
@@ -191,25 +191,26 @@ const OrganizerDashboard = () => {
 export default OrganizerDashboard
 
 function CreateEventForm({ onCreate }) {
-  const [form, setForm] = useState({ title: '', date: '', location: '', price: '', category: '', seats: 100 })
+  // canonical keys: start_date, venue, capacity
+  const [form, setForm] = useState({ title: '', start_date: '', venue: '', price: '', category: '', capacity: 100 })
 
   const submit = async (e) => {
     e.preventDefault()
     try {
       const ev = { ...form }
       await onCreate(ev)
-      setForm({ title: '', date: '', location: '', price: '', category: '', seats: 100 })
+      setForm({ title: '', start_date: '', venue: '', price: '', category: '', capacity: 100 })
     } catch (err) { console.warn(err) }
   }
 
   return (
     <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 bg-white/5 rounded">
       <input required value={form.title} onChange={e=>setForm({...form, title: e.target.value})} placeholder="Title" className="p-2 bg-transparent border rounded" />
-      <input required value={form.date} onChange={e=>setForm({...form, date: e.target.value})} type="date" className="p-2 bg-transparent border rounded" />
-      <input value={form.location} onChange={e=>setForm({...form, location: e.target.value})} placeholder="Venue/Location" className="p-2 bg-transparent border rounded" />
+      <input required value={form.start_date} onChange={e=>setForm({...form, start_date: e.target.value})} type="date" className="p-2 bg-transparent border rounded" />
+      <input value={form.venue} onChange={e=>setForm({...form, venue: e.target.value})} placeholder="Venue/Location" className="p-2 bg-transparent border rounded" />
       <input value={form.price} onChange={e=>setForm({...form, price: e.target.value})} placeholder="Price (e.g. $49 or Free)" className="p-2 bg-transparent border rounded" />
       <input value={form.category} onChange={e=>setForm({...form, category: e.target.value})} placeholder="Category" className="p-2 bg-transparent border rounded" />
-      <input value={form.seats} onChange={e=>setForm({...form, seats: e.target.value})} placeholder="Seats" className="p-2 bg-transparent border rounded" />
+      <input value={form.capacity} onChange={e=>setForm({...form, capacity: e.target.value})} placeholder="Capacity" className="p-2 bg-transparent border rounded" />
       <div className="md:col-span-2 text-right">
         <button className="px-4 py-2 bg-indigo-600 text-white rounded">Create Event</button>
       </div>

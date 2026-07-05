@@ -19,8 +19,6 @@ import AdminDashboard from './pages/AdminDashboard'
 import Ticket from './pages/Ticket'
 import ForgotPassword from './pages/ForgotPassword'
 import CreateEvent from './pages/CreateEvent'
-import MyEvents from './pages/MyEvents'
-import Tickets from './pages/Tickets'
 import Notifications from './pages/Notifications'
 import Settings from './pages/Settings'
 import './App.css'
@@ -46,16 +44,9 @@ function App() {
         <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
         <Route path="/events/:id/register" element={<MainLayout><RegisterFlow /></MainLayout>} />
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
-<<<<<<< HEAD
-        <Route path="/my-events" element={<ProtectedRoute><MainLayout><MyEvents /></MainLayout></ProtectedRoute>} />
-        <Route path="/tickets" element={<ProtectedRoute><MainLayout><Tickets /></MainLayout></ProtectedRoute>} />
-        <Route path="/organizer/checkin" element={<MainLayout><CheckIn /></MainLayout>} />
-        <Route path="/admin" element={<ProtectedRoute><MainLayout><AdminDashboard /></MainLayout></ProtectedRoute>} />
-=======
         <Route path="/organizer" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><OrganizerDashboard /></MainLayout></ProtectedRoute>} />
         <Route path="/organizer/checkin" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><CheckIn /></MainLayout></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><MainLayout><AdminDashboard /></MainLayout></ProtectedRoute>} />
->>>>>>> 0f19eb8170bee855413ca446d0c70e85c092e0b9
         <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
         <Route path="/ticket/:ticketId" element={<MainLayout><Ticket /></MainLayout>} />
         <Route path="*" element={<MainLayout><Home /></MainLayout>} />

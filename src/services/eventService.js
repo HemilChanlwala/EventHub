@@ -99,6 +99,9 @@ export const deleteEvent = async (id) => {
   return data
 }
 
+export const getEvents = getAllEvents
+export const saveEvent = createEvent
+
 export default {
   createEvent,
   getAllEvents,
@@ -106,4 +109,6 @@ export default {
   getOrganizerEvents,
   updateEvent,
   deleteEvent,
+  getEvents,
+  saveEvent,
 }

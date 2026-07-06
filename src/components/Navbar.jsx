@@ -83,7 +83,7 @@ const Navbar = () => {
           )}
         </div>
         <div className="flex items-center space-x-4">
-          <button aria-label="Toggle theme" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className="px-2 py-1 rounded hover:bg-white/5">
+          <button aria-label="Toggle theme" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className="px-2 py-1 rounded hover:bg-surface-soft">
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
 
@@ -91,19 +91,19 @@ const Navbar = () => {
             {!user && (
               <>
                 <Link to="/login">Login</Link>
-                <Link to="/register" className="px-3 py-1 border rounded border-theme">Register</Link>
+                <Link to="/register" className="px-3 py-1 border rounded border-surface">Register</Link>
               </>
             )}
 
             {user && (
               <>
-                <button aria-label="Notifications" className="px-2 py-1 rounded hover:bg-white/5">🔔</button>
+                <button aria-label="Notifications" className="px-2 py-1 rounded hover:bg-surface-soft">🔔</button>
 
                 <div className="flex items-center gap-3">
                   <div className={`px-2 py-1 rounded text-sm ${badgeClass}`}>{roleLabel}</div>
 
                   <div className="relative">
-                    <button onClick={() => setMenuOpen(m => !m)} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-white/5">
+                    <button onClick={() => setMenuOpen(m => !m)} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-surface-soft">
                       {avatarUrl ? (
                         <img src={avatarUrl} alt="avatar" className="w-8 h-8 rounded-full object-cover" />
                       ) : (
@@ -114,7 +114,7 @@ const Navbar = () => {
 
                     <AnimatePresence>
                       {menuOpen && (
-                        <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="absolute right-0 mt-2 bg-white/5 rounded shadow-lg w-48 z-20">
+                        <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="absolute right-0 mt-2 bg-surface rounded shadow-lg w-48 z-20 border border-surface">
                           <div className="p-2">
                             <Link to="/profile" onClick={() => setMenuOpen(false)} className="block px-2 py-1">Profile</Link>
                             {role === 'user' && <Link to="/tickets" onClick={() => setMenuOpen(false)} className="block px-2 py-1">My Tickets</Link>}
@@ -136,7 +136,7 @@ const Navbar = () => {
               </>
             )}
           </div>
-          <button className="md:hidden px-3 py-2 border rounded border-theme" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+          <button className="md:hidden px-3 py-2 border rounded border-surface" onClick={() => setOpen(!open)} aria-label="Toggle menu">
             Menu
           </button>
         </div>

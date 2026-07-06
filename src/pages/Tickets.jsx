@@ -2,13 +2,18 @@ import { useMemo } from 'react'
 import Sidebar from '../components/Sidebar'
 import { useContext } from 'react'
 import AuthContext from '../context/AuthContext'
+import TicketCard from '../components/TicketCard'
 
 const Tickets = () => {
   const { user } = useContext(AuthContext)
 
   const registrations = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem('eventhub_registrations') || '[]').filter((item) => item.email === user?.email)
+      const userEmail = user?.email?.toLowerCase().trim()
+      return JSON.parse(localStorage.getItem('eventhub_registrations') || '[]').filter((item) => {
+        const registrationEmail = String(item.email || '').toLowerCase().trim()
+        return userEmail && registrationEmail === userEmail
+      })
     } catch {
       return []
     }
@@ -22,14 +27,9 @@ const Tickets = () => {
       <main className="lg:col-span-3">
         <h2 className="text-2xl font-semibold mb-3">Tickets</h2>
         {registrations.length ? (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {registrations.map((registration) => (
-              <div key={registration.ticketId} className="glass p-4 rounded">
-                <div className="font-semibold">{registration.eventTitle}</div>
-                <div className="text-sm text-theme-weak">Ticket ID: {registration.ticketId}</div>
-                <div className="mt-2 text-sm">Type: {registration.ticketType}</div>
-                <div className="mt-2 text-sm">Price: {registration.price}</div>
-              </div>
+              <TicketCard key={registration.ticketId} registration={registration} />
             ))}
           </div>
         ) : (

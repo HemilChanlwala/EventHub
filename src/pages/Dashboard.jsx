@@ -210,13 +210,13 @@ function CreateEventForm({ onCreate }) {
   }
 
   return (
-    <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 bg-white/5 rounded">
-      <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Title" className="p-2 bg-transparent border rounded" />
-      <input required value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} type="date" className="p-2 bg-transparent border rounded" />
-      <input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Venue/Location" className="p-2 bg-transparent border rounded" />
-      <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Price (e.g. $49 or Free)" className="p-2 bg-transparent border rounded" />
-      <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Category" className="p-2 bg-transparent border rounded" />
-      <input value={form.seats} onChange={(e) => setForm({ ...form, seats: e.target.value })} placeholder="Seats" className="p-2 bg-transparent border rounded" />
+    <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 bg-surface-soft border border-surface rounded-xl">
+      <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Title" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
+      <input required value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} type="date" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
+      <input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Venue/Location" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
+      <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Price (e.g. $49 or Free)" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
+      <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Category" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
+      <input value={form.seats} onChange={(e) => setForm({ ...form, seats: e.target.value })} placeholder="Seats" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
       <div className="md:col-span-2 text-right">
         <button className="px-4 py-2 bg-indigo-600 text-white rounded">Create Event</button>
       </div>

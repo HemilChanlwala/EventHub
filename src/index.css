@@ -1,18 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #ffffff; /* white */
-  --primary: #4f46e5; /* indigo */
-  --secondary: #0891b2; /* cyan */
-  --accent: #db2777; /* pink */
-  --text: #475569; /* slate */
-  --text-h: #0f172a;
-  --border: rgba(0,0,0,0.08);
-  --code-bg: rgba(0,0,0,0.04);
-  --accent-bg: rgba(219,39,119,0.06);
-  --accent-border: rgba(219,39,119,0.12);
+  --bg: #F8FAFC;
+  --card: #FFFFFF;
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --secondary: #38BDF8;
+  --text: #0F172A;
+  --text-weak: #64748B;
+  --border: #E2E8F0;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --code-bg: rgba(15,23,42,0.04);
+  --accent-bg: rgba(79,70,229,0.08);
+  --accent-border: rgba(79,70,229,0.16);
   --social-bg: rgba(241,245,249,0.8);
-  --shadow: rgba(0,0,0,0.05) 0 10px 30px -10px;
+  --shadow: rgba(15,23,42,0.08) 0 10px 30px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -37,6 +41,9 @@
 
 body {
   margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
 }
 
 /* Mobile/touch optimizations */
@@ -51,9 +58,38 @@ a, button, input, select, textarea {
   align-items: center;
   justify-content: center;
   min-height: 40px;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
+  padding: 0.75rem 1.2rem;
+  border-radius: 9999px;
   line-height: 1;
+  transition: all 200ms ease;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: #F1F5F9;
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  background: #E2E8F0;
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
 }
 
 #root {
@@ -119,14 +155,12 @@ code {
 /* Glassmorphism utilities */
 .glass {
   position: relative;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
-  box-shadow: 0 8px 30px rgba(2,6,23,0.6);
-  border-radius: 16px;
-  transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms;
-  color: var(--text-h);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: 20px;
+  transition: transform 300ms ease, box-shadow 300ms ease, background 300ms ease;
+  color: var(--text);
 }
 .glass::before {
   content: '';
@@ -134,20 +168,22 @@ code {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(135deg, rgba(99,102,241,0.04), rgba(6,182,212,0.02));
-  mix-blend-mode: screen;
+  background: rgba(79,70,229,0.04);
+  mix-blend-mode: normal;
+  opacity: 0.3;
 }
-.glass:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 18px 50px rgba(99,102,241,0.12), 0 0 40px rgba(99,102,241,0.06); }
+.glass:hover { transform: translateY(-4px); box-shadow: 0 18px 50px rgba(15,23,42,0.12); }
 
 .glass-sm { border-radius: 12px; padding: 12px; }
 
 .glass-navbar {
-  position: fixed; left: 0; right: 0; top: 12px; margin: 0 auto; width: 100%; z-index: 40;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  backdrop-filter: blur(12px);
+  position: fixed; left: 0; right: 0; top: 0; margin: 0 auto; width: 100%; z-index: 40;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 25px rgba(15,23,42,0.06);
 }
-.glass-navbar.solid { background: rgba(15,23,42,0.95); border-bottom: 1px solid rgba(255,255,255,0.03); box-shadow: 0 8px 30px rgba(2,6,23,0.6); }
+.glass-navbar.solid { background: var(--card); border-bottom: 1px solid var(--border); box-shadow: 0 10px 30px rgba(15,23,42,0.08); }
 
 .shadow-glow { box-shadow: 0 10px 30px rgba(99,102,241,0.12), 0 0 24px rgba(236,72,153,0.06); }
 
@@ -165,15 +201,40 @@ code {
 
 /* Theme helper utilities used by components to follow CSS variables */
 .text-theme { color: var(--text) !important; }
-.text-theme-weak { color: var(--text); opacity: 0.85; }
-.border-theme { border-color: var(--border) !important; }
+.text-theme-weak { color: var(--text-weak); }
+.border-theme, .border-surface { border-color: var(--border) !important; }
+.bg-surface { background: var(--card) !important; }
+.bg-surface-soft { background: rgba(241,245,249,0.9) !important; }
+.shadow-soft { box-shadow: 0 10px 30px rgba(15,23,42,0.06); }
+.input-theme {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.input-theme:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.12);
+}
+.table-header {
+  background: #F8FAFC;
+  border-color: var(--border);
+}
+.badge-upcoming { background: rgba(79,70,229,0.12); color: var(--primary); }
+.badge-completed { background: rgba(34,197,94,0.12); color: var(--success); }
+.badge-cancelled { background: rgba(239,68,68,0.12); color: var(--danger); }
+.badge-draft { background: rgba(148,163,184,0.12); color: #64748B; }
+
+[data-theme="dark"] .bg-surface-soft { background: rgba(255,255,255,0.06) !important; }
 
 
 /* Dark theme via attribute for toggle support */
 [data-theme="dark"] {
   --text: #9ca3af;
+  --text-weak: #9ca3af;
   --text-h: #f3f4f6;
   --bg: #16171d;
+  --card: #111827;
   --border: #2e303a;
   --code-bg: #1f2028;
   --accent: #c084fc;

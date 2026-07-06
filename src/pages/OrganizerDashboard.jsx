@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import StatsCard from '../components/StatsCard'
 import EventCard from '../components/EventCard'
-import { getEvents, deleteEvent, getRegistrations, getRegistrationsFromServer, saveEvent } from '../services'
+import { getEvents, deleteEvent, getRegistrations, getRegistrationsFromServer, saveEvent, removeExpiredOrganizerEvents } from '../services'
 import AuthContext from '../context/AuthContext'
 import { notify } from '../utils/notify'
 import exportCsv from '../utils/exportCsv'
@@ -17,13 +17,21 @@ const OrganizerDashboard = () => {
 
   useEffect(() => {
     const load = async () => {
+      try {
+        if (user?.id) {
+          await removeExpiredOrganizerEvents(user.id)
+        }
+      } catch (err) {
+        console.warn('Failed to remove expired organizer events', err)
+      }
+
       const data = await getEvents(true)
       setEvents(data)
       const serverRegs = await getRegistrationsFromServer()
       setRegistrations(serverRegs.length ? serverRegs : getRegistrations())
     }
     load()
-  }, [])
+  }, [user?.id])
 
   useEffect(() => {
     const onStorage = () => setRegistrations(getRegistrations())

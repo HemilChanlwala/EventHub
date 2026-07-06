@@ -25,10 +25,6 @@ const Dashboard = () => {
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-<<<<<<< HEAD
-  const events = getEvents()
-  const organizerEvents = events.filter((event) => !user?.id || event.creator === user?.id)
-=======
   useEffect(() => {
     const load = async () => {
       const data = await getEvents(true)
@@ -37,7 +33,8 @@ const Dashboard = () => {
     load()
   }, [])
 
->>>>>>> 0f19eb8170bee855413ca446d0c70e85c092e0b9
+  const organizerEvents = events.filter((event) => !user?.id || event.creator === user?.id)
+
   const userRegs = registrations.filter(r => !user || (user.email && r.email === user.email))
   const [upcomingCount, setUpcomingCount] = useState(0)
 

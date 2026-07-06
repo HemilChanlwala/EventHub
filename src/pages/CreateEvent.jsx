@@ -98,45 +98,9 @@ const CreateEvent = () => {
 
     loadEvent();
   }, [id]);
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     setSubmitting(true)
-    useEffect(() => {
-      if (!isEdit) return;
-
-      const loadEvent = async () => {
-        try {
-          const event = await getEventById(id);
-
-          setForm({
-            title: event.title || "",
-            short_description: event.short_description || "",
-            description: event.description || "",
-            category: event.category || "",
-            venue: event.venue || "",
-            city: event.city || "",
-            state: event.state || "",
-            start_date: event.start_date || "",
-            end_date: event.end_date || "",
-            start_time: event.start_time || "",
-            end_time: event.end_time || "",
-            capacity: event.capacity || "",
-            event_type: event.event_type || "",
-            price: event.price || "",
-            banner_url: event.banner_url || "",
-          });
-
-          if (event.banner_url) {
-            setPreviewUrl(event.banner_url);
-          }
-        } catch (err) {
-          console.error(err);
-          notify("Unable to load event", "error");
-        }
-      };
-
-      loadEvent();
-    }, [id]);
 
     try {
       let bannerUrl = form.banner_url

@@ -2,7 +2,8 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import AuthContext from "../context/AuthContext";
-import { saveEvent, uploadBanner } from "../services";
+import { saveEvent } from "../services/eventService";
+import { uploadBanner } from "../services/storageService";
 
 import {
   getEventById,
@@ -114,17 +115,17 @@ const CreateEvent = () => {
         short_description: form.short_description,
         description: form.description,
         category: form.category,
-        event_type: form.event_type || "General",
         venue: form.venue,
         city: form.city,
         state: form.state,
-        country: "India",
         start_date: form.start_date,
         end_date: form.end_date,
         start_time: form.start_time,
         end_time: form.end_time,
-        capacity: Number(form.capacity),
-        price: Number(form.price) || 0,
+        ticket_type: form.event_type,
+        capacity: Number(form.capacity) || 0,
+        price: form.price || "0",
+        tags: form.tags ? form.tags.split(',').map((tag) => tag.trim()).filter(Boolean) : [],
         banner_url: bannerUrl,
         status: "Upcoming",
       };
@@ -138,12 +139,12 @@ const CreateEvent = () => {
       }
 
       setStatus('Event created successfully. You can view it on the Events page.')
-      notify('Event created', 'success')
       navigate("/my-events");
     } catch (err) {
-      console.warn(err)
-      setStatus('Unable to create the event right now.')
-      notify('Failed to create event', 'error')
+      console.warn('CreateEvent error', err)
+      const message = err?.message || err?.error?.message || 'Unable to create the event right now.'
+      setStatus(message)
+      notify(message, 'error')
     } finally {
       setSubmitting(false)
     }

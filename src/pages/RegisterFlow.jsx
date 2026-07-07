@@ -228,7 +228,7 @@ const RegisterFlow = () => {
           <div ref={ticketRef} className="rounded-[32px] overflow-hidden border border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 shadow-[0_40px_120px_rgba(15,23,42,0.28)]">
             <div className="relative h-56 overflow-hidden bg-slate-900">
               {event.image ? (
-                <img src={event.image} alt={event.title} crossOrigin="anonymous" className="absolute inset-0 h-full w-full object-cover opacity-90" />
+                <img src={event.image} alt={event.title} className="absolute inset-0 h-full w-full object-cover opacity-90" />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 via-slate-900 to-slate-800" />
               )}
@@ -307,7 +307,7 @@ const RegisterFlow = () => {
                     <span className="inline-flex rounded-full bg-emerald-500/15 px-3 py-2 text-xs uppercase tracking-[0.24em] text-emerald-200">Valid</span>
                   </div>
                   <div className="mt-6 flex items-center justify-center rounded-[28px] bg-white/10 p-4">
-                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${qrData}`} alt="QR code" crossOrigin="anonymous" className="h-48 w-48 rounded-3xl bg-white p-2" />
+                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${qrData}`} alt="QR code" className="h-48 w-48 rounded-3xl bg-white p-2" />
                   </div>
                   <div className="mt-6 rounded-[24px] border border-dashed border-slate-700 p-4 text-sm text-slate-400">
                     <div className="font-semibold text-white">Ticket details</div>

@@ -111,14 +111,17 @@ const TicketCard = ({ registration }) => {
 
       <div
         ref={captureRef}
-        className="pointer-events-none opacity-0"
         style={{
           position: 'absolute',
           left: '-9999px',
-          top: '-9999px',
+          top: '0',
           width: '1122px',
           padding: '32px',
           backgroundColor: '#0f172a',
+          pointerEvents: 'none',
+          opacity: 1,
+          visibility: 'visible',
+          zIndex: -1,
         }}
         aria-hidden="true"
       >

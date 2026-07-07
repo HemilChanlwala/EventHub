@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import EventCard from '../components/EventCard'
 import { getEvents } from '../services'
 import formatDate from '../utils/formatDate'
+import { EVENT_CATEGORIES } from '../constants/eventCategories'
 
 const Events = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const selectedCategory = searchParams.get('category') || 'All'
   const [query, setQuery] = useState('')
-  const [category, setCategory] = useState('All')
+  const [category, setCategory] = useState(selectedCategory)
   const [location, setLocation] = useState('')
   const [date, setDate] = useState('')
   const [priceFilter, setPriceFilter] = useState('All')
@@ -22,10 +26,26 @@ const Events = () => {
     load()
   }, [])
 
+  useEffect(() => {
+    setCategory(selectedCategory)
+    setPage(1)
+  }, [selectedCategory])
+
   const categories = useMemo(() => {
-    const set = new Set(events.map((s) => s.category).filter(Boolean))
+    const set = new Set(EVENT_CATEGORIES)
+    events.map((s) => s.category).filter(Boolean).forEach((item) => set.add(item))
     return ['All', ...Array.from(set)]
   }, [events])
+
+  const handleCategoryChange = (value) => {
+    setCategory(value)
+    setPage(1)
+    if (value === 'All') {
+      setSearchParams({})
+    } else {
+      setSearchParams({ category: value })
+    }
+  }
 
   const filtered = useMemo(() => {
     return events.filter((e) => {
@@ -63,7 +83,7 @@ const Events = () => {
         <div className="glass p-4 grid grid-cols-1 md:grid-cols-6 gap-4">
           <input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1) }} placeholder="Search events" className="w-full md:col-span-2 p-3 bg-transparent border border-theme rounded text-theme" />
           <input value={location} onChange={(e) => { setLocation(e.target.value); setPage(1) }} placeholder="Location" className="w-full p-3 bg-transparent border border-theme rounded text-theme" />
-          <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1) }} className="w-full min-w-0 p-3 bg-transparent border border-theme rounded text-theme">
+          <select value={category} onChange={(e) => handleCategoryChange(e.target.value)} className="w-full min-w-0 p-3 bg-transparent border border-theme rounded text-theme">
             {categories.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
           <input value={date} onChange={(e) => { setDate(e.target.value); setPage(1) }} type="date" className="w-full min-w-0 p-2 bg-transparent border border-theme rounded text-theme" />
@@ -84,7 +104,9 @@ const Events = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
         {filtered.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-theme-weak">No events found.</div>
+          <div className="col-span-full text-center py-12 text-theme-weak">
+            {category !== 'All' ? `No ${category} events available.` : 'No events found.'}
+          </div>
         ) : (
           sorted.slice((page - 1) * pageSize, page * pageSize).map((e) => (
             <EventCard key={e.id} id={e.id} title={e.title} date={formatDate(e.date)} location={e.location} price={e.price} image={e.image} />

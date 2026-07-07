@@ -76,6 +76,11 @@ const RegisterFlow = () => {
       notes: formExtra.notes,
       ticketType,
       price,
+      eventDate: event.date || event.start_date || event.event_date || '',
+      eventTime: event.time || event.start_time || event.event_time || '',
+      eventLocation: event.location || event.venue || '',
+      eventBanner: event.image || event.banner_url || '',
+      organizerName: event.organizer || event.organizer_name || 'EventHub',
       createdAt: new Date().toISOString(),
       qrData,
     }

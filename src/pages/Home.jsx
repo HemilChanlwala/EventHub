@@ -4,8 +4,7 @@ import AuthContext from '../context/AuthContext'
 import EventCard from '../components/EventCard'
 import formatDate from '../utils/formatDate'
 import StatsCard from '../components/StatsCard'
-
-const categories = ['Technology','Music','Sports','Workshop','Business','Startup','Seminar','Cultural']
+import { EVENT_CATEGORIES } from '../constants/eventCategories'
 
 const stats = [
   { label: 'Events', value: '500+' },
@@ -59,8 +58,10 @@ const Home = () => {
       <section className="py-12">
         <h2 className="text-2xl font-semibold mb-4">Categories</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {categories.map(c => (
-            <div key={c} className="glass p-4 rounded-lg text-center text-theme-weak neon-hover">{c}</div>
+          {EVENT_CATEGORIES.map(c => (
+            <Link key={c} to={`/events?category=${encodeURIComponent(c)}`} className="glass p-4 rounded-lg text-center text-theme-weak neon-hover transition">
+              {c}
+            </Link>
           ))}
         </div>
       </section>

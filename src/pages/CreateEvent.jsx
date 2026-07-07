@@ -11,6 +11,7 @@ import {
 } from "../services/eventService";
 
 import { notify } from "../utils/notify";
+import { EVENT_CATEGORIES } from "../constants/eventCategories";
 
 
 const CreateEvent = () => {
@@ -176,12 +177,16 @@ const CreateEvent = () => {
 
             <label className="space-y-2 text-sm">
               <span className="text-gray-300">Category</span>
-              <input
+              <select
                 value={form.category}
                 onChange={(e) => handleChange('category', e.target.value)}
-                placeholder="Music, Sports, Workshop"
                 className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-white placeholder:text-zinc-500"
-              />
+              >
+                <option value="" disabled>Select category</option>
+                {EVENT_CATEGORIES.map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
             </label>
 
             <label className="space-y-2 text-sm">

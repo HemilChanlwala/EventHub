@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 import { generateCertificate } from '../utils/generateCertificate'
 import { notify } from '../utils/notify'
+import { EVENT_CATEGORIES } from '../constants/eventCategories'
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext)
@@ -161,12 +162,16 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {userRegs.length ? (
                 userRegs.map(r => (
-                  <div key={r.ticketId} className="glass p-4 rounded">
-                    <div className="font-semibold">{r.eventTitle}</div>
-                    <div className="text-sm text-theme-weak">{r.ticketType} • {r.ticketId}</div>
-                    <div className="mt-3 flex items-center gap-2">
-                      <a href={`/ticket/${r.ticketId}`} className="px-3 py-1 bg-white/5 text-theme rounded text-sm">View Ticket</a>
-                      <button onClick={() => { try { generateCertificate(r); notify('Certificate downloaded') } catch (err) { void err } }} className="px-3 py-1 bg-indigo-600 text-white rounded text-sm">Download Certificate</button>
+                  <div key={r.ticketId} className="glass min-w-0 rounded-2xl p-5 text-left">
+                    <div className="font-semibold text-theme">{r.eventTitle}</div>
+                    <div className="mt-2 text-sm leading-relaxed text-theme-weak">
+                      <span>{r.ticketType}</span>
+                      <span className="mx-2">•</span>
+                      <span className="break-all">{r.ticketId}</span>
+                    </div>
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <a href={`/ticket/${r.ticketId}`} className="inline-flex min-h-10 items-center justify-center rounded-xl bg-surface-soft px-3 py-2 text-center text-sm font-medium text-theme transition hover:bg-white/10">View Ticket</a>
+                      <button onClick={() => { try { generateCertificate(r); notify('Certificate downloaded') } catch (err) { void err } }} className="inline-flex min-h-10 items-center justify-center rounded-xl bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white transition hover:bg-indigo-500">Download Certificate</button>
                       <button onClick={() => {
                         try {
                           const all = JSON.parse(localStorage.getItem('eventhub_registrations') || '[]')
@@ -175,7 +180,7 @@ const Dashboard = () => {
                           setRegistrations(filtered)
                           notify('Registration canceled', 'info')
                         } catch (err) { console.warn(err); notify('Failed to cancel', 'error') }
-                      }} className="px-3 py-1 border rounded text-sm">Cancel</button>
+                      }} className="col-span-2 inline-flex min-h-10 items-center justify-center rounded-xl border border-surface px-3 py-2 text-sm font-medium text-theme-weak transition hover:bg-surface-soft hover:text-theme">Cancel</button>
                     </div>
                   </div>
                 ))
@@ -215,7 +220,12 @@ function CreateEventForm({ onCreate }) {
       <input required value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} type="date" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
       <input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Venue/Location" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
       <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Price (e.g. $49 or Free)" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
-      <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Category" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
+      <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100">
+        <option value="" disabled>Select category</option>
+        {EVENT_CATEGORIES.map((category) => (
+          <option key={category} value={category}>{category}</option>
+        ))}
+      </select>
       <input value={form.seats} onChange={(e) => setForm({ ...form, seats: e.target.value })} placeholder="Seats" className="p-3 bg-white border border-surface rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-indigo-100" />
       <div className="md:col-span-2 text-right">
         <button className="px-4 py-2 bg-indigo-600 text-white rounded">Create Event</button>

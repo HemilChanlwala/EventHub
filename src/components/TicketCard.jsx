@@ -2,12 +2,20 @@ import { useRef } from 'react'
 import { downloadTicketPdf } from '../utils/downloadTicket'
 
 const formatDate = (dateStr) => {
-  try { return new Date(dateStr).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) }
+  try {
+    const date = new Date(dateStr)
+    if (Number.isNaN(date.getTime())) return 'TBD'
+    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+  }
   catch { return dateStr || 'TBD' }
 }
 
 const formatTime = (dateStr) => {
-  try { return new Date(dateStr).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) }
+  try {
+    const date = new Date(dateStr)
+    if (Number.isNaN(date.getTime())) return 'TBD'
+    return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+  }
   catch { return dateStr || 'TBD' }
 }
 
@@ -115,9 +123,9 @@ const TicketCard = ({ registration }) => {
           position: 'absolute',
           left: '-9999px',
           top: '0',
-          width: '1122px',
-          padding: '32px',
-          backgroundColor: '#0f172a',
+          width: '960px',
+          padding: '24px',
+          background: 'linear-gradient(135deg, #e0e7ff, #f8fafc)',
           pointerEvents: 'none',
           opacity: 1,
           visibility: 'visible',
@@ -125,78 +133,76 @@ const TicketCard = ({ registration }) => {
         }}
         aria-hidden="true"
       >
-        <div style={{ width: '1050px', borderRadius: '30px', overflow: 'hidden', backgroundColor: '#020617', boxShadow: '0 40px 120px rgba(15,23,42,.25)' }}>
-          <div style={{ padding: '40px', background: 'linear-gradient(135deg, #4f46e5, #8b5cf6)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#fff' }}>
+        <div style={{ width: '912px', borderRadius: '30px', overflow: 'hidden', backgroundColor: '#ffffff', boxShadow: '0 30px 90px rgba(15,23,42,.22)', border: '1px solid rgba(99,102,241,.22)' }}>
+          <div style={{ position: 'relative', padding: '34px 40px 30px', color: '#fff', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #0ea5e9 100%)' }}>
+            <div style={{ position: 'absolute', right: '-70px', top: '-90px', width: '240px', height: '240px', borderRadius: '999px', background: 'rgba(255,255,255,.14)' }} />
+            <div style={{ position: 'absolute', left: '300px', bottom: '-90px', width: '220px', height: '220px', borderRadius: '999px', background: 'rgba(255,255,255,.10)' }} />
+
+            <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <div style={{ fontSize: '22px', fontWeight: 800 }}>EventHub</div>
-                <div style={{ fontSize: '14px', marginTop: '6px', color: 'rgba(255,255,255,.8)' }}>Official Event Ticket</div>
+                <div style={{ fontSize: '24px', fontWeight: 900, letterSpacing: '.02em' }}>EventHub</div>
+                <div style={{ fontSize: '12px', marginTop: '7px', letterSpacing: '.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,.78)' }}>Official Event Ticket</div>
               </div>
-              <div style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.2em', background: 'rgba(255,255,255,0.12)', padding: '10px 14px', borderRadius: '999px' }}>Valid</div>
+              <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.22em', background: 'rgba(255,255,255,0.18)', padding: '10px 16px', borderRadius: '999px', border: '1px solid rgba(255,255,255,.24)' }}>Valid</div>
             </div>
 
-            {bannerUrl ? (
-              <img src={bannerUrl} alt="Event Banner" style={{ width: '100%', height: '260px', objectFit: 'cover', borderRadius: '24px', marginTop: '28px' }} crossOrigin="anonymous" />
-            ) : (
-              <div style={{ marginTop: '28px', height: '260px', borderRadius: '24px', background: 'rgba(255,255,255,.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,.6)', fontSize: '16px' }}>
-                Event banner unavailable
-              </div>
-            )}
-          </div>
-
-          <div style={{ padding: '40px', backgroundColor: '#020617' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
+            <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1.35fr .65fr', gap: '26px', marginTop: '34px', alignItems: 'end' }}>
               <div>
-                <div style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#94a3b8' }}>Event Name</div>
-                <div style={{ fontSize: '28px', fontWeight: 700, color: '#fff', marginTop: '10px' }}>{registration.eventTitle}</div>
+                <div style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.24em', color: 'rgba(255,255,255,.72)' }}>Admit One</div>
+                <div style={{ fontSize: '38px', lineHeight: 1.08, fontWeight: 900, marginTop: '10px' }}>{registration.eventTitle}</div>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '18px', fontSize: '13px', color: 'rgba(255,255,255,.86)' }}>
+                  <span style={{ padding: '8px 12px', borderRadius: '999px', background: 'rgba(255,255,255,.14)' }}>{formatDate(eventDate)}</span>
+                  <span style={{ padding: '8px 12px', borderRadius: '999px', background: 'rgba(255,255,255,.14)' }}>{formatTime(eventTime)}</span>
+                  <span style={{ padding: '8px 12px', borderRadius: '999px', background: 'rgba(255,255,255,.14)' }}>{venue}</span>
+                </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#94a3b8' }}>Event Date</div>
-                <div style={{ fontSize: '20px', color: '#fff', marginTop: '10px' }}>{formatDate(eventDate)}</div>
-                <div style={{ fontSize: '14px', color: '#c7d2fe', marginTop: '4px' }}>{formatTime(eventTime)}</div>
-              </div>
-            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0,1fr))', gap: '20px', marginTop: '30px' }}>
-              <div style={{ padding: '22px', borderRadius: '22px', background: '#111827' }}>
-                <div style={{ fontSize: '12px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.2em' }}>Venue</div>
-                <div style={{ marginTop: '10px', color: '#fff' }}>{venue}</div>
-              </div>
-              <div style={{ padding: '22px', borderRadius: '22px', background: '#111827' }}>
-                <div style={{ fontSize: '12px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.2em' }}>Organizer</div>
-                <div style={{ marginTop: '10px', color: '#fff' }}>{organizerName}</div>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0,1fr))', gap: '20px', marginTop: '30px' }}>
-              <div style={{ padding: '22px', borderRadius: '22px', background: '#111827' }}>
-                <div style={{ fontSize: '12px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.2em' }}>Attendee</div>
-                <div style={{ marginTop: '10px', color: '#fff' }}>{userName}</div>
-                <div style={{ marginTop: '6px', color: '#c7d2fe', fontSize: '14px' }}>{registration.email}</div>
-              </div>
-              <div style={{ padding: '22px', borderRadius: '22px', background: '#111827' }}>
-                <div style={{ fontSize: '12px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.2em' }}>Ticket</div>
-                <div style={{ marginTop: '10px', color: '#fff', fontSize: '18px', fontWeight: 700 }}>{registration.ticketType || 'General Admission'}</div>
-                <div style={{ marginTop: '6px', color: '#c7d2fe', fontSize: '14px' }}>ID: {registration.ticketId}</div>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '20px', marginTop: '30px' }}>
-              <div style={{ padding: '22px', borderRadius: '22px', background: '#111827' }}>
-                <div style={{ fontSize: '12px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.2em' }}>Registration</div>
-                <div style={{ marginTop: '10px', color: '#fff' }}>{formatDate(registrationDate)}</div>
-              </div>
-              <div style={{ padding: '22px', borderRadius: '22px', background: '#111827', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img src={qrUrl} alt="QR code" style={{ width: '160px', height: '160px' }} crossOrigin="anonymous" />
+              <div style={{ borderRadius: '24px', overflow: 'hidden', height: '132px', background: 'rgba(255,255,255,.14)', border: '1px solid rgba(255,255,255,.18)' }}>
+                {bannerUrl ? (
+                  <img src={bannerUrl} alt="Event Banner" style={{ width: '100%', height: '100%', objectFit: 'cover' }} crossOrigin="anonymous" />
+                ) : (
+                  <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', fontSize: '12px', letterSpacing: '.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,.72)' }}>
+                    EventHub
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          <div style={{ padding: '28px 40px 40px', backgroundColor: '#0b1121' }}>
-            <div style={{ fontSize: '12px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.2em' }}>Note</div>
-            <p style={{ marginTop: '12px', color: '#cbd5e1', lineHeight: 1.7 }}>
-              This ticket is generated by EventHub. Please present this QR code at the event entrance.
-            </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 250px', gap: '0', backgroundColor: '#fff' }}>
+            <div style={{ padding: '34px 34px 30px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0,1fr))', gap: '16px' }}>
+                {[
+                  ['Attendee', userName],
+                  ['Ticket Type', registration.ticketType || 'General Admission'],
+                  ['Organizer', organizerName],
+                  ['Registration', formatDate(registrationDate)],
+                ].map(([label, value]) => (
+                  <div key={label} style={{ padding: '18px', borderRadius: '20px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</div>
+                    <div style={{ marginTop: '8px', color: '#0f172a', fontSize: '16px', fontWeight: 800 }}>{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginTop: '18px', padding: '18px', borderRadius: '20px', background: '#eef2ff', border: '1px solid #c7d2fe' }}>
+                <div style={{ fontSize: '10px', color: '#4f46e5', textTransform: 'uppercase', letterSpacing: '0.2em' }}>Ticket ID</div>
+                <div style={{ marginTop: '8px', color: '#1e1b4b', fontSize: '14px', fontWeight: 800, wordBreak: 'break-all' }}>{registration.ticketId}</div>
+              </div>
+            </div>
+
+            <div style={{ position: 'relative', padding: '34px 28px', background: '#0f172a', color: '#fff', borderLeft: '2px dashed #cbd5e1' }}>
+              <div style={{ position: 'absolute', left: '-15px', top: '-15px', width: '30px', height: '30px', borderRadius: '999px', background: '#e0e7ff' }} />
+              <div style={{ position: 'absolute', left: '-15px', bottom: '-15px', width: '30px', height: '30px', borderRadius: '999px', background: '#e0e7ff' }} />
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.24em', color: '#93c5fd' }}>Scan at entry</div>
+              <div style={{ marginTop: '18px', padding: '12px', borderRadius: '22px', background: '#fff' }}>
+                <img src={qrUrl} alt="QR code" style={{ width: '170px', height: '170px', display: 'block' }} crossOrigin="anonymous" />
+              </div>
+              <div style={{ marginTop: '18px', padding: '12px 14px', borderRadius: '18px', background: 'rgba(34,197,94,.16)', color: '#bbf7d0', fontSize: '12px', fontWeight: 800, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '.18em' }}>Valid Ticket</div>
+              <p style={{ marginTop: '18px', color: '#cbd5e1', lineHeight: 1.5, fontSize: '12px' }}>
+                Present this QR code with a valid ID at the event entrance.
+              </p>
+            </div>
           </div>
         </div>
       </div>

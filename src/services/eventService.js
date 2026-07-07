@@ -86,7 +86,9 @@ export const getAllEvents = async () => {
     const { data, error } = await supabase.from('events').select('*').order('created_at', { ascending: false })
     if (error) throw error
 
-    return Array.isArray(data) ? data.map(normalizeEvent) : []
+    const events = Array.isArray(data) ? data.map(normalizeEvent) : []
+    await removeExpiredEvents(events)
+    return events.filter((event) => !isExpiredEvent(event))
 }
 
 export const getEventById = async (id) => {
@@ -95,18 +97,49 @@ export const getEventById = async (id) => {
     const { data, error } = await supabase.from('events').select('*').eq('id', id).single()
     if (error) throw error
 
-    return normalizeEvent(data)
+    const event = normalizeEvent(data)
+    if (isExpiredEvent(event)) {
+        await removeExpiredEvents([event])
+        throw new Error('Event has expired')
+    }
+
+    return event
 }
 
 const getEventDateValue = (event = {}) => {
     return event.start_date || event.date || event.event_date || event.startDate || event.eventDate || null
 }
 
+const getEventExpiryDateValue = (event = {}) => {
+    return event.end_date || event.endDate || getEventDateValue(event)
+}
+
 const isExpiredEvent = (event = {}) => {
-    const dateValue = getEventDateValue(event)
+    const dateValue = getEventExpiryDateValue(event)
     if (!dateValue) return false
     const eventTime = new Date(dateValue).getTime()
-    return !Number.isNaN(eventTime) && eventTime < Date.now()
+    if (Number.isNaN(eventTime)) return false
+
+    const expiryDate = new Date(eventTime)
+    expiryDate.setHours(23, 59, 59, 999)
+    return expiryDate.getTime() < Date.now()
+}
+
+const removeExpiredEvents = async (events = []) => {
+    const expired = events.filter((event) => isExpiredEvent(event))
+    if (expired.length === 0) return []
+
+    const expiredIds = expired.map((event) => event.id).filter(Boolean)
+    if (expiredIds.length === 0) return expired
+
+    try {
+        const { error } = await supabase.from('events').delete().in('id', expiredIds)
+        if (error) throw error
+    } catch (err) {
+        console.warn('removeExpiredEvents', err)
+    }
+
+    return expired
 }
 
 export const getOrganizerEvents = async (organizerId) => {
@@ -120,7 +153,9 @@ export const getOrganizerEvents = async (organizerId) => {
 
     if (error) throw error
 
-    return Array.isArray(data) ? data.map(normalizeEvent) : []
+    const events = Array.isArray(data) ? data.map(normalizeEvent) : []
+    await removeExpiredEvents(events)
+    return events.filter((event) => !isExpiredEvent(event))
 }
 
 export const removeExpiredOrganizerEvents = async (organizerId) => {
@@ -134,14 +169,8 @@ export const removeExpiredOrganizerEvents = async (organizerId) => {
     if (error) throw error
     if (!Array.isArray(data) || data.length === 0) return []
 
-    const expired = data.filter((event) => isExpiredEvent(event))
-    if (expired.length === 0) return []
-
-    const expiredIds = expired.map((event) => event.id).filter(Boolean)
-    const { error: deleteError } = await supabase.from('events').delete().in('id', expiredIds)
-    if (deleteError) throw deleteError
-
-    return expiredIds
+    const expired = await removeExpiredEvents(data)
+    return expired.map((event) => event.id).filter(Boolean)
 }
 
 export const updateEvent = async (id, updates) => {

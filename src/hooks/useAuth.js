@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { clearSessionStoragePreference, setSessionStoragePreference, supabase } from "../lib/supabase";
 
 const buildProfileFromUser = (authUser, fallbackProfile = null) => {
   const metadata = authUser?.user_metadata || {};
@@ -37,65 +37,95 @@ const fetchProfile = async (authUser) => {
 
 export default function useAuth() {
   const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const syncAuthState = async (authUser, nextSession, shouldStopLoading = true) => {
+    setUser(authUser ?? null);
+    setSession(nextSession ?? null);
+    setIsAuthenticated(Boolean(authUser));
+
+    if (authUser?.id) {
+      const profileData = await fetchProfile(authUser);
+      setProfile(profileData);
+    } else {
+      setProfile(null);
+    }
+
+    if (shouldStopLoading) {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Get current session and authenticated user on page load
+    let isMounted = true;
+
     const getUser = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      try {
+        const {
+          data: { session: currentSession },
+        } = await supabase.auth.getSession();
 
-      if (session?.user) {
-        const authUser = session.user;
-        setUser(authUser);
+        if (currentSession?.user) {
+          if (!isMounted) return;
+          await syncAuthState(currentSession.user, currentSession, false);
+          setLoading(false);
+          return;
+        }
 
-        const profileData = await fetchProfile(authUser);
-        setProfile(profileData);
-        setLoading(false);
-        return;
+        const response = await supabase.auth.getUser();
+        const nextUser = response?.data?.user ?? null;
+        const error = response?.error ?? null;
+
+        if (!isMounted) return;
+
+        if (!error && nextUser) {
+          console.log(nextUser.email);
+          await syncAuthState(nextUser, null, false);
+        } else {
+          setUser(null);
+          setSession(null);
+          setProfile(null);
+          setIsAuthenticated(false);
+        }
+      } catch (err) {
+        console.warn('Unable to initialize auth session', err);
+        if (isMounted) {
+          setUser(null);
+          setSession(null);
+          setProfile(null);
+          setIsAuthenticated(false);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-
-      const response = await supabase.auth.getUser();
-      const user = response?.data?.user ?? null;
-      const error = response?.error ?? null;
-
-      if (!error && user) {
-        console.log(user.email);
-        setUser(user);
-
-        const profileData = await fetchProfile(user);
-        setProfile(profileData);
-      } else {
-        setUser(null);
-        setProfile(null);
-      }
-
-      setLoading(false);
     };
 
     getUser();
 
-    // Listen for login/logout changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      const authUser = session?.user ?? null;
-      setUser(authUser);
+    } = supabase.auth.onAuthStateChange(async (event, nextSession) => {
+      if (!isMounted) return;
 
+      const authUser = nextSession?.user ?? null;
       if (authUser) {
-        const profileData = await fetchProfile(authUser);
-        setProfile(profileData);
+        await syncAuthState(authUser, nextSession, false);
       } else {
+        setUser(null);
+        setSession(null);
         setProfile(null);
+        setIsAuthenticated(false);
       }
 
       setLoading(false);
 
-      // Remove OAuth query parameters after successful login
       if (
-        event === "SIGNED_IN" &&
+        event === 'SIGNED_IN' &&
         (window.location.search || window.location.hash)
       ) {
         window.history.replaceState(
@@ -106,11 +136,15 @@ export default function useAuth() {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
-  // Email Registration
-  const register = async ({ fullName, email, phone, password, role }) => {
+  const register = async ({ fullName, email, phone, password, role, rememberMe = true }) => {
+    setSessionStoragePreference(rememberMe);
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -118,7 +152,7 @@ export default function useAuth() {
         data: {
           full_name: fullName,
           phone,
-          role: role || "user",
+          role: role || 'user',
         },
       },
     });
@@ -133,17 +167,20 @@ export default function useAuth() {
         full_name: fullName,
         email,
         phone,
-        role: role || "user",
+        role: role || 'user',
       });
       setUser(data.user);
       setProfile(nextProfile);
+      setIsAuthenticated(Boolean(data.user));
     }
 
     return { success: true };
   };
 
-  // Email Login
-  const login = async (email, password) => {
+  const login = async (email, password, options = {}) => {
+    const { rememberMe = true } = options;
+    setSessionStoragePreference(rememberMe);
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -162,7 +199,7 @@ export default function useAuth() {
 
     const authUser = data?.user ?? null;
     let profileData = null;
-    let role = "attendee";
+    let role = 'attendee';
 
     if (authUser?.id) {
       profileData = await fetchProfile(authUser);
@@ -170,12 +207,11 @@ export default function useAuth() {
       if (profileData?.role) {
         role = profileData.role;
       } else {
-        role = "user";
+        role = 'user';
       }
     }
 
-    setUser(authUser);
-    setProfile(profileData);
+    await syncAuthState(authUser, data?.session ?? null, true);
 
     return {
       success: true,
@@ -185,27 +221,33 @@ export default function useAuth() {
     };
   };
 
-  // Google Login
-  const loginWithGoogle = async () => {
-    return await supabase.auth.signInWithOAuth({
-      provider: "google",
+  const loginWithGoogle = async (options = {}) => {
+    const { rememberMe = true } = options;
+    setSessionStoragePreference(rememberMe);
+
+    return supabase.auth.signInWithOAuth({
+      provider: 'google',
       options: {
         redirectTo: `${window.location.origin}`,
       },
     });
   };
 
-  // Logout
   const logout = async () => {
     await supabase.auth.signOut();
+    clearSessionStoragePreference();
     setUser(null);
+    setSession(null);
     setProfile(null);
+    setIsAuthenticated(false);
   };
 
   return {
     user,
+    session,
     profile,
     loading,
+    isAuthenticated,
     register,
     login,
     loginWithGoogle,

@@ -16,7 +16,7 @@ const Login = () => {
     e.preventDefault()
     setError('')
 
-    const result = await login(email, password)
+    const result = await login(email, password, { rememberMe: remember })
 
     if (!result.success) {
       setError(result.error)
@@ -141,7 +141,8 @@ const Login = () => {
         </div>
 
         <button
-          type="submit"
+          type="button"
+          onClick={(e) => handleSubmit(e)}
           className="w-full px-4 py-2 bg-indigo-600 text-white rounded"
         >
           Login

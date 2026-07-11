@@ -95,8 +95,8 @@ const Events = () => {
           <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1) }} className="w-full min-w-0 p-2 bg-transparent border border-theme rounded text-theme">
             <option value="latest">Latest</option>
             <option value="oldest">Oldest</option>
-            <option value="price-asc">Price Low → High</option>
-            <option value="price-desc">Price High → Low</option>
+            <option value="price-asc">Price Low to High</option>
+            <option value="price-desc">Price High to Low</option>
             <option value="popular">Most Popular</option>
           </select>
         </div>
@@ -109,7 +109,7 @@ const Events = () => {
           </div>
         ) : (
           sorted.slice((page - 1) * pageSize, page * pageSize).map((e) => (
-            <EventCard key={e.id} id={e.id} title={e.title} date={formatDate(e.date)} location={e.location} price={e.price} image={e.image} />
+            <EventCard key={e.id} id={e.id} title={e.title} date={formatDate(e.date)} location={e.location} price={e.price} image={e.image} category={e.category} />
           ))
         )}
       </div>

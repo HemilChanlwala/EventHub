@@ -14,9 +14,17 @@ const roleLabel = (roles = []) => {
 }
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-  const { user, profile, loading } = useContext(AuthContext)
+  const { user, profile, loading = false } = useContext(AuthContext)
 
-  if (loading) return null
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto p-8">
+        <div className="rounded-lg border border-slate-700 bg-slate-950/60 p-6 text-slate-100">
+          <p className="text-sm">Checking your session…</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!user) return <Navigate to="/login" replace />
 

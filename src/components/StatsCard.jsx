@@ -1,8 +1,8 @@
 const StatsCard = ({ title, value }) => {
   return (
-    <div className="bg-surface border border-surface rounded-3xl p-8 text-center shadow-sm transition duration-300 hover:shadow-lg">
+    <div className="rounded-lg border border-surface bg-surface p-7 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-soft">
       <div className="text-4xl font-bold text-[#4F46E5]">{value}</div>
-      <div className="text-sm text-slate-500 dark:text-slate-300 mt-2">{title}</div>
+      <div className="mt-2 text-sm font-medium text-slate-500 dark:text-slate-300">{title}</div>
     </div>
   )
 }

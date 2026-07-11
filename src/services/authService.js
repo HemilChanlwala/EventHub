@@ -16,7 +16,12 @@ export const signIn = async (email, password) => {
 
 export const signInWithGoogle = async () => {
   if (!supabase) throw new Error('Supabase client is not available')
-  return await supabase.auth.signInWithOAuth({ provider: 'google' })
+  return await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${window.location.origin}/dashboard`,
+    },
+  })
 }
 
 export const signOut = async () => {

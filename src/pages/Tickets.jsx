@@ -5,7 +5,7 @@ import AuthContext from '../context/AuthContext'
 import TicketCard from '../components/TicketCard'
 
 const Tickets = () => {
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext) || {}
 
   const registrations = useMemo(() => {
     try {

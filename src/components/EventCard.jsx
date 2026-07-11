@@ -7,7 +7,7 @@ const EventCard = ({ id, image, title = 'Event', date = 'TBD', location = 'Onlin
   const registerPath = id ? `/events/${id}/register` : '/events'
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-surface bg-surface text-left shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-soft">
+    <article className="group flex flex-col overflow-hidden rounded-lg border border-surface bg-surface text-left shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-soft">
       <Link to={detailsPath} className="relative block h-48 overflow-hidden bg-slate-100 dark:bg-slate-900">
         <img src={image || defaultImg} alt={title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
         <span className="absolute left-3 top-3 rounded-md bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm backdrop-blur">

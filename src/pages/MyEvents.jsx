@@ -84,7 +84,7 @@ const MyEvents = () => {
         {events.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {events.map((event) => (
-              <div key={event.id}>
+              <div key={event.id} className="flex flex-col gap-3">
                 <EventCard
                   id={event.id}
                   title={event.title}
@@ -94,7 +94,7 @@ const MyEvents = () => {
                   image={event.banner_url}
                 />
 
-                <div className="mt-3 flex gap-3">
+                <div className="flex gap-3">
 
                   <button
                     onClick={() => handleEdit(event.id)}

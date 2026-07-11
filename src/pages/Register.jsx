@@ -44,7 +44,7 @@ const Register = () => {
       return
     }
 
-    const loginResult = await login(email, password)
+    const loginResult = await login(email, password, { rememberMe: remember })
     if (loginResult.success) {
       if (loginResult.role === 'organizer') {
         navigate('/create-event')

@@ -8,6 +8,8 @@ import Register from '../pages/Register'
 import { supabase } from '../lib/supabase'
 
 vi.mock('../lib/supabase', () => ({
+  setSessionStoragePreference: vi.fn(),
+  clearSessionStoragePreference: vi.fn(),
   supabase: {
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
@@ -82,6 +84,24 @@ describe('Authentication pages', () => {
     fireEvent.click(screen.getByRole('button', { name: /^register$/i }))
 
     expect(await screen.findByText(/passwords do not match/i)).toBeTruthy()
+  })
+
+  it('passes the remember-me preference when signing in', async () => {
+    const login = vi.fn().mockResolvedValue({ success: true, role: 'attendee' })
+    renderWithAuth(<Login />, { login })
+
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'jane@example.test' },
+    })
+    fireEvent.change(screen.getByLabelText(/^password$/i), {
+      target: { value: 'secret123' },
+    })
+    fireEvent.click(screen.getByLabelText(/remember me/i))
+    fireEvent.click(screen.getByRole('button', { name: /^login$/i }))
+
+    await waitFor(() => {
+      expect(login).toHaveBeenCalledWith('jane@example.test', 'secret123', { rememberMe: true })
+    })
   })
 
   it('passes profile details when registering', async () => {

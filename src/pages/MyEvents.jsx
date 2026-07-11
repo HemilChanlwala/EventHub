@@ -7,7 +7,7 @@ import { deleteEvent } from "../services/eventService";
 import { useNavigate } from "react-router-dom";
 
 const MyEvents = () => {
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext) || {}
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate();
@@ -66,11 +66,13 @@ const MyEvents = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <aside className="lg:col-span-1">
-        <Sidebar />
-      </aside>
+      {user && (
+        <aside className="lg:col-span-1">
+          <Sidebar />
+        </aside>
+      )}
 
-      <main className="lg:col-span-3 space-y-6">
+      <main className={`${user ? 'lg:col-span-3' : 'lg:col-span-4'} space-y-6`}>
         <div>
           <h2 className="text-2xl font-semibold">My Events</h2>
           <p className="text-theme-weak">

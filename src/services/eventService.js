@@ -4,12 +4,6 @@ const DEFAULT_COUNTRY = 'India'
 const DEFAULT_STATUS = 'Upcoming'
 
 const buildEventPayload = (event = {}) => {
-    const tags = Array.isArray(event.tags)
-        ? event.tags
-        : typeof event.tags === 'string'
-            ? event.tags.split(',').map((tag) => tag.trim()).filter(Boolean)
-            : []
-
     const payload = {
         organizer_id: event.organizer_id,
         title: event.title || '',
@@ -51,7 +45,7 @@ const buildEventPayload = (event = {}) => {
     ]
 
     return Object.fromEntries(
-        Object.entries(payload).filter(([key]) => allowedColumns.includes(key))
+        Object.entries(payload).filter(([key, value]) => allowedColumns.includes(key) && value !== undefined)
     )
 }
 
@@ -87,7 +81,6 @@ export const getAllEvents = async () => {
     if (error) throw error
 
     const events = Array.isArray(data) ? data.map(normalizeEvent) : []
-    await removeExpiredEvents(events)
     return events.filter((event) => !isExpiredEvent(event))
 }
 
@@ -99,7 +92,6 @@ export const getEventById = async (id) => {
 
     const event = normalizeEvent(data)
     if (isExpiredEvent(event)) {
-        await removeExpiredEvents([event])
         throw new Error('Event has expired')
     }
 
@@ -127,18 +119,8 @@ const isExpiredEvent = (event = {}) => {
 
 const removeExpiredEvents = async (events = []) => {
     const expired = events.filter((event) => isExpiredEvent(event))
-    if (expired.length === 0) return []
-
-    const expiredIds = expired.map((event) => event.id).filter(Boolean)
-    if (expiredIds.length === 0) return expired
-
-    try {
-        const { error } = await supabase.from('events').delete().in('id', expiredIds)
-        if (error) throw error
-    } catch (err) {
-        console.warn('removeExpiredEvents', err)
-    }
-
+    // Browsing events must never delete organizer data. Expired events are
+    // filtered at read time; archival or deletion belongs in an admin job.
     return expired
 }
 
@@ -154,7 +136,6 @@ export const getOrganizerEvents = async (organizerId) => {
     if (error) throw error
 
     const events = Array.isArray(data) ? data.map(normalizeEvent) : []
-    await removeExpiredEvents(events)
     return events.filter((event) => !isExpiredEvent(event))
 }
 
@@ -163,7 +144,7 @@ export const removeExpiredOrganizerEvents = async (organizerId) => {
 
     const { data, error } = await supabase
         .from('events')
-        .select('id, start_date, date, event_date, organizer_id')
+        .select('id, start_date, end_date, organizer_id')
         .eq('organizer_id', organizerId)
 
     if (error) throw error
@@ -176,7 +157,13 @@ export const removeExpiredOrganizerEvents = async (organizerId) => {
 export const updateEvent = async (id, updates) => {
     if (!supabase) throw new Error('Supabase client is not available')
 
-    const { data, error } = await supabase.from('events').update(updates).eq('id', id).select().single()
+    // Keep updates aligned with the columns used by the existing events table.
+    // In particular, never send form-only or newly introduced fields (such as
+    // `tags`) before the database migration that adds them has been applied.
+    const payload = buildEventPayload(updates)
+    delete payload.organizer_id
+
+    const { data, error } = await supabase.from('events').update(payload).eq('id', id).select().single()
     if (error) throw error
 
     return normalizeEvent(data)

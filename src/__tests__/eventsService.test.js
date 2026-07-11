@@ -8,7 +8,7 @@ vi.mock('../lib/supabase', () => ({
   },
 }))
 
-const { getEvents } = await import('../services')
+const { getEvents, updateEvent } = await import('../services')
 
 describe('event service', () => {
   beforeEach(() => {
@@ -48,5 +48,26 @@ describe('event service', () => {
     expect(mockFrom).toHaveBeenCalledWith('events')
     expect(events[0].title).toBe('Launch Night')
     expect(events[0].venue).toBe('Skyline Hall')
+  })
+
+  it('does not send form-only tags when updating an event', async () => {
+    const single = vi.fn().mockResolvedValue({
+      data: { id: 'event-1', title: 'Updated event' },
+      error: null,
+    })
+    const select = vi.fn(() => ({ single }))
+    const eq = vi.fn(() => ({ select }))
+    const update = vi.fn(() => ({ eq }))
+    mockFrom.mockReturnValue({ update })
+
+    await updateEvent('event-1', {
+      organizer_id: 'organizer-1',
+      title: 'Updated event',
+      tags: ['legacy-schema', 'safe-update'],
+    })
+
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({ title: 'Updated event' }))
+    expect(update.mock.calls[0][0]).not.toHaveProperty('tags')
+    expect(update.mock.calls[0][0]).not.toHaveProperty('organizer_id')
   })
 })

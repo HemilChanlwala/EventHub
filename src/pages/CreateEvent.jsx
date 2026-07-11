@@ -152,7 +152,7 @@ const CreateEvent = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <div className="event-form max-w-4xl mx-auto p-8">
       <div className="mb-10 text-center">
         <h2>
           {isEdit ? "Edit Event" : "Create Event"}

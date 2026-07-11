@@ -2,6 +2,12 @@ import { supabase } from '../lib/supabase'
 
 const REGISTRATIONS_KEY = 'eventhub_registrations'
 
+const normalizePrice = (value) => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  const numeric = Number(String(value ?? '').replace(/[^0-9.-]/g, ''))
+  return Number.isFinite(numeric) ? numeric : 0
+}
+
 const readLocalRegistrations = () => {
   try {
     const data = JSON.parse(localStorage.getItem(REGISTRATIONS_KEY) || '[]')
@@ -75,14 +81,18 @@ export const saveRegistration = async (registration) => {
       attendee_email: payload.email,
       attendee_phone: payload.phone,
       ticket_type: payload.ticketType,
-      price: payload.price,
+      price: normalizePrice(payload.price),
       user_id: payload.userId,
       checked_in: payload.checkedIn,
       qr_data: payload.qrData,
       created_at: payload.createdAt,
     }
 
-    const { data, error } = await supabase.from('registrations').insert([supabasePayload]).select().single()
+    const { data, error } = await supabase
+      .from('registrations')
+      .upsert(supabasePayload, { onConflict: 'ticket_id' })
+      .select()
+      .single()
     if (error) throw error
 
     return {

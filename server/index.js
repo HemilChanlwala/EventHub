@@ -71,12 +71,13 @@ app.post('/api/events', requireApiKey, async (req, res) => {
 
   const supportedEventColumns = new Set([
     'title',
+    'short_description',
     'description',
     'category',
     'venue',
     'city',
-    'event_date',
-    'event_time',
+    'start_date',
+    'start_time',
     'price',
     'capacity',
     'banner_url',
@@ -89,7 +90,7 @@ app.post('/api/events', requireApiKey, async (req, res) => {
     if (typeof payload.price === 'number') return payload.price
     const text = String(payload.price).trim().toLowerCase()
     if (text === 'free' || text === '0' || text === '0.00') return 0
-    const parsed = parseFloat(text.replace(/[^0-9\.\-]/g, ''))
+    const parsed = parseFloat(text.replace(/[^0-9.-]/g, ''))
     return Number.isFinite(parsed) ? parsed : 0
   })()
 
@@ -99,8 +100,8 @@ app.post('/api/events', requireApiKey, async (req, res) => {
     category: payload.category || 'General',
     venue: payload.location || payload.venue || '',
     city: payload.city || '',
-    event_date: payload.date || payload.start_date || payload.event_date || null,
-    event_time: payload.time || payload.start_time || payload.event_time || null,
+    start_date: payload.date || payload.start_date || payload.event_date || null,
+    start_time: payload.time || payload.start_time || payload.event_time || null,
     price: normalizedPrice,
     capacity: payload.capacity ?? payload.seats ?? 0,
     banner_url: payload.banner_url || payload.image || payload.bannerUrl || null,
@@ -116,7 +117,7 @@ app.post('/api/events', requireApiKey, async (req, res) => {
 
   try {
     console.log('[server] create event payload', JSON.stringify(cleanPayload))
-    const { data, error } = await supabaseService.from('events').insert([cleanPayload]).select('id,title,description,category,venue,city,event_date,event_time,price,capacity,banner_url,organizer_id,created_at').single()
+    const { data, error } = await supabaseService.from('events').insert([cleanPayload]).select().single()
     if (error) {
       console.log('[server] create event error', error)
       return res.status(500).json({ error })

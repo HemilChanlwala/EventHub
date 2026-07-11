@@ -62,8 +62,8 @@ const NavItem = ({ link, pathname, onClick }) => {
       <Link
         to={link.to}
         onClick={onClick}
-        className={`group relative inline-flex cursor-pointer items-center px-1 py-2 text-sm transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A] ${
-          isActive ? 'font-semibold text-[#A5B4FC]' : 'font-medium text-slate-300 hover:text-[#A5B4FC]'
+        className={`navbar-link group relative inline-flex cursor-pointer items-center px-1 py-2 text-sm transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A] ${
+          isActive ? 'font-semibold text-[#4338CA]' : 'font-medium text-slate-600 hover:text-[#4338CA]'
         }`}
       >
         {link.label}
@@ -84,10 +84,10 @@ const MobileNavItem = ({ link, pathname, onClick }) => {
     <Link
       to={link.to}
       onClick={onClick}
-      className={`flex h-11 items-center rounded-lg px-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A] ${
+      className={`navbar-mobile-link flex h-11 items-center rounded-lg px-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A] ${
         isActive
-          ? 'bg-[#4F46E5]/18 text-[#C7D2FE] ring-1 ring-[#818CF8]/35'
-          : 'text-slate-300 hover:bg-white/5 hover:text-[#C7D2FE]'
+          ? 'bg-indigo-50 text-[#4338CA] ring-1 ring-indigo-200'
+          : 'text-slate-600 hover:bg-slate-50 hover:text-[#4338CA]'
       }`}
     >
       {link.label}
@@ -97,10 +97,10 @@ const MobileNavItem = ({ link, pathname, onClick }) => {
 
 const AuthButton = ({ to, children, variant = 'primary', onClick }) => {
   const reducedMotion = useReducedMotion()
-  const baseClass = 'inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-semibold transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]'
+  const baseClass = 'navbar-auth inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-white'
   const variantClass = variant === 'secondary'
-    ? 'border border-[#6366F1]/70 bg-[#111827] text-[#C7D2FE] hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-[#4F46E5] hover:text-white hover:shadow-[0_12px_28px_rgba(79,70,229,0.28)] active:scale-[0.97]'
-    : 'bg-[#4F46E5] text-white hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-[#4338CA] hover:shadow-[0_14px_34px_rgba(79,70,229,0.38)] active:scale-[0.97]'
+    ? 'border border-indigo-200 bg-white text-[#4338CA] hover:-translate-y-0.5 hover:scale-[1.03] hover:border-indigo-300 hover:bg-indigo-50 hover:shadow-[0_12px_28px_rgba(79,70,229,0.14)] active:scale-[0.97]'
+    : 'bg-[#4F46E5] text-white hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-[#4338CA] hover:shadow-[0_14px_34px_rgba(79,70,229,0.30)] active:scale-[0.97]'
 
   return (
     <motion.div variants={actionsVariants} {...getMotionProps(reducedMotion)}>
@@ -115,7 +115,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [theme, setTheme] = useState(() => {
-    try { return localStorage.getItem('theme') || 'dark' } catch { return 'dark' }
+    try { return localStorage.getItem('theme') || 'light' } catch { return 'light' }
   })
   const location = useLocation()
   const navigate = useNavigate()
@@ -127,17 +127,12 @@ const Navbar = () => {
   const dashboardLink = user ? '/dashboard' : '/login'
 
   useEffect(() => {
-    try {
-      if (theme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark')
-        localStorage.setItem('theme', 'dark')
-      } else {
-        document.documentElement.removeAttribute('data-theme')
-        localStorage.setItem('theme', 'light')
-      }
-    } catch (err) {
-      console.warn('theme apply error', err)
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark')
+    } else {
+      document.documentElement.removeAttribute('data-theme')
     }
+    localStorage.setItem('theme', theme)
   }, [theme])
 
   useEffect(() => {
@@ -162,10 +157,10 @@ const Navbar = () => {
       initial={reducedMotion ? false : 'hidden'}
       animate="visible"
       variants={containerVariants}
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ease-in-out ${
+      className={`site-navbar fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ease-in-out ${
         scrolled
-          ? 'border-white/10 bg-[#0F172A]/88 shadow-[0_18px_44px_rgba(2,6,23,0.34),0_8px_26px_rgba(79,70,229,0.18)] backdrop-blur-xl'
-          : 'border-white/10 bg-[#111827]/96 shadow-[0_10px_26px_rgba(2,6,23,0.22)]'
+          ? 'border-slate-200/80 bg-white/88 shadow-[0_18px_44px_rgba(30,41,59,0.10),0_8px_26px_rgba(79,70,229,0.08)] backdrop-blur-xl'
+          : 'border-slate-200 bg-white/96 shadow-[0_10px_26px_rgba(30,41,59,0.06)]'
       }`}
       aria-label="Primary navigation"
     >
@@ -173,7 +168,7 @@ const Navbar = () => {
         <motion.div variants={logoVariants} {...getMotionProps(reducedMotion)}>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-white transition-all duration-300 ease-in-out hover:text-[#C7D2FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+            className="navbar-brand inline-flex items-center gap-2 text-xl font-bold tracking-tight text-slate-900 transition-all duration-300 ease-in-out hover:text-[#4338CA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-white"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#4F46E5] text-sm font-bold text-white shadow-[0_10px_24px_rgba(79,70,229,0.36)]">
               EH
@@ -197,9 +192,9 @@ const Navbar = () => {
             <>
               <motion.button
                 type="button"
-                aria-label="Toggle theme"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
                 onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-[#1E293B] hover:text-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+                className="navbar-control inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-indigo-200 hover:bg-indigo-50 hover:text-[#4338CA] hover:shadow-[0_12px_28px_rgba(79,70,229,0.14)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-white"
                 {...getMotionProps(reducedMotion)}
               >
                 {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -212,21 +207,21 @@ const Navbar = () => {
               <Link
                 aria-label="Notifications"
                 to="/notifications"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-[#1E293B] hover:text-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+                className="navbar-control inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-indigo-200 hover:bg-indigo-50 hover:text-[#4338CA] hover:shadow-[0_12px_28px_rgba(79,70,229,0.14)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-white"
               >
                 <Bell size={18} />
               </Link>
               <motion.button
                 type="button"
-                aria-label="Toggle theme"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
                 onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-[#1E293B] hover:text-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+                className="navbar-control inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-indigo-200 hover:bg-indigo-50 hover:text-[#4338CA] hover:shadow-[0_12px_28px_rgba(79,70,229,0.14)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-white"
                 {...getMotionProps(reducedMotion)}
               >
                 {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               </motion.button>
               <div
-                className="flex max-w-48 items-center rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200"
+                className="navbar-user flex max-w-48 items-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700"
                 title={`Hi, ${displayName}`}
               >
                 <span className="truncate">Hi, {displayName}</span>
@@ -234,7 +229,7 @@ const Navbar = () => {
               <motion.button
                 type="button"
                 onClick={handleLogout}
-                className="inline-flex h-10 items-center justify-center rounded-lg border border-[#6366F1]/70 bg-[#111827] px-4 text-sm font-semibold text-[#C7D2FE] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-[#4F46E5] hover:text-white hover:shadow-[0_12px_28px_rgba(79,70,229,0.28)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+                className="inline-flex h-10 items-center justify-center rounded-xl border border-indigo-200 bg-white px-4 text-sm font-semibold text-[#4338CA] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-indigo-50 hover:shadow-[0_12px_28px_rgba(79,70,229,0.14)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-white"
                 {...getMotionProps(reducedMotion)}
               >
                 Logout
@@ -246,7 +241,7 @@ const Navbar = () => {
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-[#818CF8]/70 hover:text-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A] md:hidden"
+          className="navbar-control inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50 hover:text-[#4338CA] hover:shadow-[0_12px_28px_rgba(79,70,229,0.14)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-white md:hidden"
           aria-label="Toggle menu"
           aria-expanded={open}
           aria-controls="mobile-navigation"
@@ -263,17 +258,17 @@ const Navbar = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={reducedMotion ? { display: 'none' } : { opacity: 0, height: 0 }}
             transition={{ duration: 0.24, ease: 'easeInOut' }}
-            className="overflow-hidden border-t border-white/10 bg-[#0F172A]/98 shadow-[0_22px_48px_rgba(2,6,23,0.42)] backdrop-blur-xl md:hidden"
+            className="navbar-mobile-panel overflow-hidden border-t border-slate-200 bg-white/98 shadow-[0_22px_48px_rgba(30,41,59,0.12)] backdrop-blur-xl md:hidden"
           >
             <div className="mx-auto flex max-h-[calc(100svh-4rem)] max-w-7xl flex-col gap-4 overflow-y-auto px-4 py-4 sm:px-6">
               {user && (
-                <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-3 text-left">
+                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#4F46E5] text-sm font-bold text-white shadow-[0_10px_24px_rgba(79,70,229,0.28)]">
                     {userInitial}
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-100">Hi, {displayName}</p>
-                    <p className="mt-0.5 flex items-center gap-1.5 text-xs font-medium capitalize text-slate-400">
+                    <p className="truncate text-sm font-semibold text-slate-900">Hi, {displayName}</p>
+                    <p className="mt-0.5 flex items-center gap-1.5 text-xs font-medium capitalize text-slate-500">
                       <UserRound size={13} />
                       {role}
                     </p>
@@ -288,12 +283,11 @@ const Navbar = () => {
               </div>
               <Link to={dashboardLink} onClick={closeMenu} className="sr-only">Dashboard</Link>
 
-              <div className="grid gap-3 border-t border-white/10 pt-4">
+              <div className="grid gap-3 border-t border-slate-200 pt-4">
                 <button
                   type="button"
-                  aria-label="Toggle theme"
                   onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-sm font-semibold text-slate-200 transition-all duration-300 ease-in-out hover:bg-[#1E293B] hover:text-[#C7D2FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all duration-300 ease-in-out hover:bg-indigo-50 hover:text-[#4338CA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                 >
                   {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
                   {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
@@ -309,7 +303,7 @@ const Navbar = () => {
                       aria-label="Notifications"
                       to="/notifications"
                       onClick={closeMenu}
-                      className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-sm font-semibold text-slate-200 transition-all duration-300 ease-in-out hover:bg-[#1E293B] hover:text-[#C7D2FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]"
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all duration-300 ease-in-out hover:bg-indigo-50 hover:text-[#4338CA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                     >
                       <Bell size={18} />
                       Notifications
@@ -325,7 +319,7 @@ const Navbar = () => {
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="inline-flex h-11 items-center justify-center rounded-lg border border-[#6366F1]/70 bg-[#111827] px-3 text-sm font-semibold text-[#C7D2FE] transition-all duration-300 ease-in-out hover:bg-[#4F46E5] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]"
+                        className="inline-flex h-11 items-center justify-center rounded-xl border border-indigo-200 bg-white px-3 text-sm font-semibold text-[#4338CA] transition-all duration-300 ease-in-out hover:bg-indigo-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                       >
                         Logout
                       </button>

@@ -41,7 +41,7 @@ function App() {
         <Route path="/tickets" element={<ProtectedRoute><MainLayout><Tickets /></MainLayout></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><MainLayout><Notifications /></MainLayout></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
-        <Route path="/events/:id/register" element={<MainLayout><RegisterFlow /></MainLayout>} />
+        <Route path="/events/:id/register" element={<ProtectedRoute><MainLayout><RegisterFlow /></MainLayout></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
         <Route path="/organizer" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><OrganizerDashboard /></MainLayout></ProtectedRoute>} />
         <Route path="/organizer/checkin" element={<ProtectedRoute allowedRoles={['organizer']}><MainLayout><CheckIn /></MainLayout></ProtectedRoute>} />

@@ -2,9 +2,11 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { CalendarDays, Clock3, MapPin, User, Ticket as TicketIcon } from 'lucide-react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getEvents, saveRegistration } from '../services'
+import { createRazorpayOrder, verifyRazorpayPayment } from '../services/paymentService'
 import { downloadTicketPdf } from '../utils/downloadTicket'
 import formatDate from '../utils/formatDate'
 import AuthContext from '../context/AuthContext'
+import { notify } from '../utils/notify'
 
 const parsePrice = (p) => {
   if (!p) return 0
@@ -18,6 +20,17 @@ function makeTicketId(eventId) {
   return `EVT-${eventId}-${String(Date.now()).slice(-6)}`
 }
 
+const loadRazorpayCheckout = () => new Promise((resolve, reject) => {
+  if (window.Razorpay) return resolve()
+
+  const script = document.createElement('script')
+  script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+  script.async = true
+  script.onload = () => resolve()
+  script.onerror = () => reject(new Error('Unable to load Razorpay Checkout'))
+  document.body.appendChild(script)
+})
+
 const RegisterFlow = () => {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -29,6 +42,7 @@ const RegisterFlow = () => {
   const [ticketId, setTicketId] = useState(null)
   const [processing, setProcessing] = useState(false)
   const ticketRef = useRef(null)
+  const registrationFinalized = useRef(false)
   const { user, profile } = useContext(AuthContext)
 
   useEffect(() => {
@@ -60,6 +74,8 @@ const RegisterFlow = () => {
   const price = ticketPrices[ticketType]
 
   const finalizeRegistration = async () => {
+    if (registrationFinalized.current) return
+    registrationFinalized.current = true
     const tid = makeTicketId(event.id)
     const qrData = JSON.stringify({ ticketId: tid, event: event.title })
     const reg = {
@@ -83,11 +99,81 @@ const RegisterFlow = () => {
       organizerName: event.organizer || event.organizer_name || 'EventHub',
       createdAt: new Date().toISOString(),
       qrData,
+      userId: user?.id || null,
     }
 
-    await saveRegistration(reg)
-    setTicketId(tid)
-    setStep(5)
+    try {
+      await saveRegistration(reg)
+      setTicketId(tid)
+      setStep(5)
+    } catch (error) {
+      registrationFinalized.current = false
+      throw error
+    }
+  }
+
+  const handlePayment = async () => {
+    if (processing || !event) return
+
+    setProcessing(true)
+
+    try {
+      const order = await createRazorpayOrder({ eventId: event.id, amount: price })
+      await loadRazorpayCheckout()
+
+      const options = {
+        key: order.key_id,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.order_id,
+        name: 'EventHub',
+        description: `${event.title} registration`,
+        prefill: {
+          name: form.name,
+          email: form.email || user?.email || '',
+          contact: form.phone,
+        },
+        handler: async (response) => {
+          try {
+            const verification = await verifyRazorpayPayment({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              eventId: event.id,
+              userId: user?.id,
+              amount: price,
+            })
+
+            if (!verification?.success) {
+              throw new Error('Payment verification failed')
+            }
+
+            await finalizeRegistration()
+          } catch (err) {
+            notify(err.message || 'Payment verification failed', 'error')
+          } finally {
+            setProcessing(false)
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setProcessing(false)
+            notify('Payment cancelled', 'error')
+          },
+        },
+        theme: { color: '#4F46E5' },
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.on('payment.failed', () => {
+        setProcessing(false)
+        notify('Payment failed. Please try again.', 'error')
+      })
+      rzp.open()
+    } catch (err) {
+      setProcessing(false)
+      notify(err.message || 'Unable to start payment', 'error')
+    }
   }
 
   const onSubmitStep = async (e) => {
@@ -105,12 +191,7 @@ const RegisterFlow = () => {
       return
     }
     if (step === 4) {
-      setProcessing(true)
-      try {
-        await finalizeRegistration()
-      } finally {
-        setProcessing(false)
-      }
+      await handlePayment()
     }
   }
 
@@ -191,14 +272,7 @@ const RegisterFlow = () => {
           <div className="p-4 border rounded bg-white/5">
             <div className="flex justify-between"><div>Ticket</div><div>{ticketType}</div></div>
             <div className="flex justify-between mt-2"><div>Amount</div><div>{priceToLabel(price)}</div></div>
-            <div className="mt-3">
-              <label className="block text-sm text-gray-300">Cardholder name</label>
-              <input className="w-full p-3 bg-transparent border border-theme rounded" />
-              <div className="grid grid-cols-3 gap-2 mt-2">
-                <input placeholder="Card number" className="col-span-2 p-3 bg-transparent border border-theme rounded" />
-                <input placeholder="CVC" className="p-3 bg-transparent border border-theme rounded" />
-              </div>
-            </div>
+            <p className="mt-3 text-sm text-gray-400">You will securely complete payment in Razorpay Checkout.</p>
           </div>
           <div className="flex justify-between">
             <button onClick={() => setStep(3)} className="px-4 py-2 border rounded">Back</button>
@@ -331,7 +405,15 @@ const RegisterFlow = () => {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button onClick={() => downloadTicketPdf({ eventTitle: event.title, ticketId }, ticketRef.current)} className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-500">
+            <button onClick={() => downloadTicketPdf({
+              eventTitle: event.title,
+              ticketId,
+              name: form.name,
+              ticketType,
+              eventDate: event.date || event.start_date || event.event_date,
+              eventTime: event.time || event.start_time || event.event_time,
+              eventLocation: event.location || event.venue,
+            }, ticketRef.current)} className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-500">
               Download Ticket PDF
             </button>
             <button onClick={() => navigate('/dashboard')} className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50">

@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import AuthContext from '../context/AuthContext'
 
 const roleLabel = (roles = []) => {
@@ -15,6 +15,7 @@ const roleLabel = (roles = []) => {
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { user, profile, loading = false } = useContext(AuthContext)
+  const location = useLocation()
 
   if (loading) {
     return (
@@ -26,7 +27,9 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     )
   }
 
-  if (!user) return <Navigate to="/login" replace />
+  if (!user) {
+    return <Navigate to="/login" replace state={{ from: location }} />
+  }
 
   const role = profile?.role || user?.role || user?.user_metadata?.role || 'attendee'
   if (allowedRoles.length && !allowedRoles.includes(role)) {

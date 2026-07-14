@@ -1,10 +1,14 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext'
 
 const Login = () => {
   const { login, loginWithGoogle } = useAuthContext()
   const navigate = useNavigate()
+  const location = useLocation()
+  const returnTo = location.state?.from?.pathname
+    ? `${location.state.from.pathname}${location.state.from.search || ''}${location.state.from.hash || ''}`
+    : null
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -23,7 +27,9 @@ const Login = () => {
       return
     }
 
-    if (result.role === 'organizer') {
+    if (returnTo) {
+      navigate(returnTo, { replace: true })
+    } else if (result.role === 'organizer') {
       navigate('/organizer')
     } else if (result.role === 'admin') {
       navigate('/admin')
@@ -157,6 +163,13 @@ const Login = () => {
             Login with Google
           </button>
         </div>
+
+        <p className="text-center text-sm text-theme-weak">
+          New to EventHub?{' '}
+          <Link to="/register" state={{ from: location.state?.from }} className="text-indigo-400 hover:underline">
+            Create an account
+          </Link>
+        </p>
       </form>
     </div>
   )

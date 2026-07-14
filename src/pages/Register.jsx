@@ -1,10 +1,14 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext'
 
 const Register = () => {
   const { register, loginWithGoogle, login } = useAuthContext()
   const navigate = useNavigate()
+  const location = useLocation()
+  const returnTo = location.state?.from?.pathname
+    ? `${location.state.from.pathname}${location.state.from.search || ''}${location.state.from.hash || ''}`
+    : null
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -46,7 +50,9 @@ const Register = () => {
 
     const loginResult = await login(email, password, { rememberMe: remember })
     if (loginResult.success) {
-      if (loginResult.role === 'organizer') {
+      if (returnTo) {
+        navigate(returnTo, { replace: true })
+      } else if (loginResult.role === 'organizer') {
         navigate('/create-event')
       } else if (loginResult.role === 'admin') {
         navigate('/admin')
@@ -57,7 +63,7 @@ const Register = () => {
     }
 
     alert('Registration Successful! Please login to continue.')
-    navigate('/login')
+    navigate('/login', { state: { from: location.state?.from } })
   }
 
   const handleGoogle = async () => {
@@ -233,6 +239,13 @@ const Register = () => {
             Register with Google
           </button>
         </div>
+
+        <p className="text-center text-sm text-theme-weak">
+          Already have an account?{' '}
+          <Link to="/login" state={{ from: location.state?.from }} className="text-indigo-400 hover:underline">
+            Log in
+          </Link>
+        </p>
       </form>
     </div>
   )

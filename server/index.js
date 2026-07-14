@@ -1,7 +1,9 @@
 import 'dotenv/config'
+import crypto from 'crypto'
 import express from 'express'
 import cors from 'cors'
 import multer from 'multer'
+import Razorpay from 'razorpay'
 import { createClient } from '@supabase/supabase-js'
 
 const app = express()
@@ -31,6 +33,15 @@ if (SUPABASE_URL) {
 
 const upload = multer()
 
+const RAZORPAY_KEY_ID = (globalThis.process && globalThis.process.env && globalThis.process.env.RAZORPAY_KEY_ID) || ''
+const RAZORPAY_KEY_SECRET = (globalThis.process && globalThis.process.env && globalThis.process.env.RAZORPAY_KEY_SECRET) || ''
+let razorpay = null
+if (RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET })
+} else {
+  console.warn('[server] Razorpay credentials not configured; payment endpoints will return an error until configured')
+}
+
 // Simple API key middleware for write operations (if SERVER_API_KEY set)
 const SERVER_API_KEY = (globalThis.process && globalThis.process.env && (globalThis.process.env.SERVER_API_KEY || globalThis.process.env.VITE_SERVER_API_KEY)) || ''
 function requireApiKey(req, res, next) {
@@ -39,6 +50,93 @@ function requireApiKey(req, res, next) {
   if (!key || String(key) !== String(SERVER_API_KEY)) return res.status(401).json({ error: 'Unauthorized' })
   next()
 }
+
+const normalizeAmountToPaise = (amount) => {
+  const parsed = Number(amount)
+  if (!Number.isFinite(parsed) || parsed <= 0) return 0
+  return Math.round(parsed * 100)
+}
+
+const verifyRazorpaySignature = ({ razorpay_order_id, razorpay_payment_id, razorpay_signature }) => {
+  if (!RAZORPAY_KEY_SECRET || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) return false
+  const expectedSignature = crypto.createHmac('sha256', RAZORPAY_KEY_SECRET).update(`${razorpay_order_id}|${razorpay_payment_id}`).digest('hex')
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(razorpay_signature))
+  } catch {
+    return false
+  }
+}
+
+app.post('/api/payment/create-order', async (req, res) => {
+  if (!razorpay) return res.status(500).json({ error: 'Razorpay not configured' })
+  try {
+    const { eventId, amount, currency = 'INR' } = req.body || {}
+    const amountInPaise = normalizeAmountToPaise(amount)
+    if (!eventId || !amountInPaise) {
+      return res.status(400).json({ error: 'A valid event ID and amount are required' })
+    }
+
+    const order = await razorpay.orders.create({
+      amount: amountInPaise,
+      currency: String(currency).toUpperCase(),
+      receipt: `event-${eventId}-${Date.now()}`.slice(0, 40),
+      notes: { event_id: String(eventId) },
+    })
+
+    return res.json({
+      order_id: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      key_id: RAZORPAY_KEY_ID,
+    })
+  } catch (err) {
+    return res.status(500).json({ error: String(err) })
+  }
+})
+
+app.post('/api/payment/verify', async (req, res) => {
+  const payload = req.body || {}
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature, eventId, userId, amount } = payload
+
+  if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+    return res.status(400).json({ error: 'Missing Razorpay payment details' })
+  }
+
+  if (!verifyRazorpaySignature({ razorpay_order_id, razorpay_payment_id, razorpay_signature })) {
+    return res.status(400).json({ error: 'Payment verification failed' })
+  }
+
+  try {
+    if (supabaseService) {
+      const existingPayment = await supabaseService.from('payments').select('id').eq('razorpay_order_id', razorpay_order_id).maybeSingle()
+      if (existingPayment.error && existingPayment.error.code !== 'PGRST116') {
+        console.warn('[server] payment lookup failed', existingPayment.error)
+      } else if (existingPayment.data) {
+        return res.json({ success: true, already_verified: true })
+      }
+
+      const paymentPayload = {
+        user_id: userId || null,
+        event_id: eventId || null,
+        amount: amount ?? null,
+        status: 'paid',
+        razorpay_order_id,
+        razorpay_payment_id,
+        created_at: new Date().toISOString(),
+      }
+      const { error: insertError } = await supabaseService.from('payments').insert([paymentPayload])
+      if (insertError) {
+        console.error('[server] could not save verified payment', insertError)
+        return res.status(500).json({ error: 'Payment was verified but could not be recorded' })
+      }
+    }
+
+    return res.json({ success: true })
+  } catch (err) {
+    console.error('[server] payment verification failed', err)
+    return res.status(500).json({ error: 'Could not complete payment verification' })
+  }
+})
 
 app.get('/api/events', async (req, res) => {
   if (!supabase) return res.status(500).json({ error: 'Supabase not configured' })

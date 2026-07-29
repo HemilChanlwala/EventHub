@@ -3,11 +3,22 @@ import { Link } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import StatsCard from '../components/StatsCard'
 import EventCard from '../components/EventCard'
-import { getEvents, deleteEvent, getRegistrations, getRegistrationsFromServer, saveEvent, removeExpiredOrganizerEvents } from '../services'
+import {
+  getEvents,
+  deleteEvent,
+  getRegistrations,
+  getRegistrationsFromServer,
+  saveEvent,
+  removeExpiredOrganizerEvents,
+  updateRegistration
+} from '../services'
 import AuthContext from '../context/AuthContext'
 import { notify } from '../utils/notify'
 import exportCsv from '../utils/exportCsv'
 import { EVENT_CATEGORIES } from '../constants/eventCategories'
+
+
+
 
 const OrganizerDashboard = () => {
   const { user } = useContext(AuthContext)
@@ -15,6 +26,13 @@ const OrganizerDashboard = () => {
   const [events, setEvents] = useState([])
   const [registrations, setRegistrations] = useState([])
   const [selectedEventId, setSelectedEventId] = useState(null)
+  const [searchUser, setSearchUser] = useState("")
+  const [filterCategory, setFilterCategory] = useState("")
+  const [filterStatus, setFilterStatus] = useState("")
+  const [filterDate, setFilterDate] = useState("")
+  const [page, setPage] = useState(1)
+
+  const perPage = 10
 
   useEffect(() => {
     const load = async () => {
@@ -48,9 +66,72 @@ const OrganizerDashboard = () => {
     }
   }, [myEvents, selectedEventId])
 
+// 
+  useEffect(() => {
+    setPage(1)
+  }, [
+    searchUser,
+    filterCategory,
+    filterStatus,
+    filterDate,
+    selectedEventId
+  ])
+  
+  
+
   const selectedEvent = myEvents.find(e => String(e.id) === String(selectedEventId)) || myEvents[0] || null
   const myRegistrations = registrations.filter(r => myEvents.some(e => String(e.id) === String(r.eventId)))
-  const selectedAttendees = selectedEvent ? registrations.filter(r => String(r.eventId) === String(selectedEvent.id)) : []
+  const filteredAttendees = registrations.filter((r) => {
+
+    const event = myEvents.find(
+      e => String(e.id) === String(r.eventId)
+    )
+
+    if (!event) return false
+
+
+    const matchEvent =
+      !selectedEventId ||
+      String(r.eventId) === String(selectedEventId)
+
+
+    const matchSearch =
+      !searchUser ||
+      r.name?.toLowerCase().includes(searchUser.toLowerCase()) ||
+      r.email?.toLowerCase().includes(searchUser.toLowerCase())
+
+
+    const matchCategory =
+      !filterCategory ||
+      event.category === filterCategory
+
+
+    const matchStatus =
+      !filterStatus ||
+      r.status === filterStatus
+
+
+    const matchDate =
+      !filterDate ||
+      r.createdAt?.slice(0, 10) === filterDate
+
+
+    return (
+      matchEvent &&
+      matchSearch &&
+      matchCategory &&
+      matchStatus &&
+      matchDate
+    )
+
+  })
+
+
+  const paginatedAttendees =
+    filteredAttendees.slice(
+      (page - 1) * perPage,
+      page * perPage
+    )
 
   const revenue = myEvents.reduce((sum, e) => {
     try {
@@ -75,10 +156,11 @@ const OrganizerDashboard = () => {
       notify('Event created', 'info')
     } catch (err) { console.warn(err); notify('Failed to create event', 'error') }
   }
-
+  //  filter and pagination 
   const handleExportAttendees = () => {
     if (!selectedEvent) return
-    const rows = selectedAttendees.map((attendee) => ({
+
+    const rows = filteredAttendees.map((attendee) => ({
       ticketId: attendee.ticketId,
       name: attendee.name,
       email: attendee.email,
@@ -90,17 +172,25 @@ const OrganizerDashboard = () => {
       eventTitle: attendee.eventTitle,
       registeredAt: attendee.createdAt || attendee.created_at || '',
     }))
+
     exportCsv(`attendees-${selectedEvent.title || selectedEvent.id}.csv`, rows)
   }
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this event?')) return
+  
     try {
-      deleteEvent(id)
+      await deleteEvent(id)
+  
       const data = await getEvents(true)
       setEvents(data)
+  
       notify('Event deleted', 'info')
-    } catch (err) { console.warn(err); notify('Failed to delete', 'error') }
+  
+    } catch (err) {
+      console.warn(err)
+      notify('Failed to delete', 'error')
+    }
   }
 
   return (
@@ -137,97 +227,222 @@ const OrganizerDashboard = () => {
               <button onClick={handleExportAttendees} className="px-3 py-2 border rounded text-sm">Export attendees</button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-2">Event</label>
-                <select value={selectedEventId || ''} onChange={(e) => setSelectedEventId(e.target.value)} className="w-full p-3 bg-transparent border rounded">
-                  {myEvents.map((e) => (
-                    <option key={e.id} value={e.id}>{e.title}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="p-3 bg-white/5 rounded">
-                  <div className="text-sm text-gray-400">Attendees</div>
-                  <div className="text-lg font-semibold">{selectedAttendees.length}</div>
-                </div>
-                <div className="p-3 bg-white/5 rounded">
-                  <div className="text-sm text-gray-400">Checked In</div>
-                  <div className="text-lg font-semibold">{selectedAttendees.filter((r) => r.checkedIn).length}</div>
-                </div>
-              </div>
-            </div>
+            <div className="grid md:grid-cols-5 gap-3 mt-5">
 
-            <div className="mt-4 space-y-3">
-            {selectedAttendees.length > 0 ? selectedAttendees.map((attendee) => (
-              <div key={attendee.ticketId} className="p-4 bg-white/5 rounded">
-                <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <div className="font-semibold">{attendee.name || attendee.email}</div>
-                      <div className="text-sm text-gray-400">{attendee.email} • {attendee.phone}</div>
-                    </div>
-                    <div className="text-sm text-theme-weak">{attendee.ticketType}</div>
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-400">
-                    <span>Ticket: {attendee.ticketId}</span>
-                    <span>Price: {attendee.price}</span>
-                    <span>{attendee.checkedIn ? 'Checked in' : 'Not checked in'}</span>
-                  </div>
-                </div>
-              )) : (
-                <div className="p-4 bg-white/5 rounded text-gray-400">No attendees found for this event yet.</div>
-              )}
+
+              <input
+                className="p-2 border rounded"
+                placeholder="Search user/email"
+                value={searchUser}
+                onChange={(e) => setSearchUser(e.target.value)}
+              />
+
+
+              <select
+                className="p-2 border rounded"
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+              >
+
+                <option value="">All Categories</option>
+
+                {EVENT_CATEGORIES.map(c => (
+                  <option key={c}>{c}</option>
+                ))}
+
+              </select>
+
+
+
+              <select
+                className="p-2 border rounded"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+
+                <option value="">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Cancelled">Cancelled</option>
+
+              </select>
+
+
+
+              <input
+                type="date"
+                className="p-2 border rounded"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+              />
+
+
+              <select
+                className="p-2 border rounded"
+                value={selectedEventId || ""}
+                onChange={(e) => setSelectedEventId(e.target.value)}
+              >
+
+                <option value="">
+                  All Events
+                </option>
+
+                {myEvents.map(e => (
+                  <option key={e.id} value={e.id}>
+                    {e.title}
+                  </option>
+                ))}
+
+              </select>
+
+
             </div>
           </div>
 
-          <h3 className="text-lg font-semibold mb-3 mt-6">Your Events</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {myEvents.slice(0,6).map(e => (
-              <div key={e.id} className="relative">
-                <EventCard id={e.id} title={e.title} date={e.date} location={e.location} price={e.price} image={e.image} />
-                <div className="mt-2 flex gap-2">
-                  <button onClick={() => handleDelete(e.id)} className="px-3 py-1 border rounded text-sm">Delete</button>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Event</label>
+              <select value={selectedEventId || ''} onChange={(e) => setSelectedEventId(e.target.value)} className="w-full p-3 bg-transparent border rounded">
+                {myEvents.map((e) => (
+                  <option key={e.id} value={e.id}>{e.title}</option>
+                ))}
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+
+<div className="p-3 bg-white/5 rounded">
+  <div className="text-sm text-gray-400">
+    Attendees
+  </div>
+
+  <div className="text-lg font-semibold">
+    {filteredAttendees.length}
+  </div>
+</div>
+
+
+<div className="p-3 bg-white/5 rounded">
+  <div className="text-sm text-gray-400">
+    Checked In
+  </div>
+
+  <div className="text-lg font-semibold">
+    {
+      filteredAttendees.filter(
+        r => r.checkedIn
+      ).length
+    }
+  </div>
+</div>
+
+</div>
+              <div className="mt-4 space-y-3">
+                {paginatedAttendees.length > 0 ? paginatedAttendees.map((attendee) => (
+                  <div key={attendee.ticketId} className="p-4 bg-white/5 rounded">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <div className="font-semibold">{attendee.name || attendee.email}</div>
+                        <div className="text-sm text-gray-400">{attendee.email} • {attendee.phone}</div>
+                      </div>
+                      <div className="text-sm text-theme-weak">{attendee.ticketType}</div>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-400">
+                      <span>Ticket: {attendee.ticketId}</span>
+                      <span>Price: {attendee.price}</span>
+                      <span>
+                        {attendee.checkedIn ? 'Checked in' : 'Not checked in'}
+                      </span>
+                    </div>
+
+
+                    {/* ADD BUTTONS HERE */}
+
+                    <div className="flex gap-2 mt-3">
+
+                      <button
+                        className="px-3 py-1 bg-green-600 text-white rounded"
+                        onClick={async () => {
+                          await updateRegistration(attendee.id, {
+                            status: "Approved"
+                          })
+
+                          const updated = await getRegistrationsFromServer()
+                          setRegistrations(updated)
+                        }}
+                      >
+                        Approve
+                      </button>
+
+
+                      <button
+                        className="px-3 py-1 bg-red-600 text-white rounded"
+                        onClick={async () => {
+                          await updateRegistration(attendee.id, {
+                            status: "Cancelled"
+                          })
+
+                          const updated = await getRegistrationsFromServer()
+                          setRegistrations(updated)
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )) : (
+                  <div className="p-4 bg-white/5 rounded text-gray-400">No attendees found for this event yet.</div>
+                )}
               </div>
-            ))}
+            </div>
+
+            <h3 className="text-lg font-semibold mb-3 mt-6">Your Events</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {myEvents.slice(0, 6).map(e => (
+                <div key={e.id} className="relative">
+                  <EventCard id={e.id} title={e.title} date={e.date} location={e.location} price={e.price} image={e.image} />
+                  <div className="mt-2 flex gap-2">
+                    <button onClick={() => handleDelete(e.id)} className="px-3 py-1 border rounded text-sm">Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  )
+      )
 }
 
-export default OrganizerDashboard
+      export default OrganizerDashboard
 
-function CreateEventForm({ onCreate }) {
+      function CreateEventForm({onCreate}) {
   // canonical keys: start_date, venue, capacity
-  const [form, setForm] = useState({ title: '', start_date: '', venue: '', price: '', category: '', capacity: 100 })
+  const [form, setForm] = useState({title: '', start_date: '', venue: '', price: '', category: '', capacity: 100 })
 
   const submit = async (e) => {
-    e.preventDefault()
+        e.preventDefault()
     try {
-      const ev = { ...form }
+      const ev = {...form}
       await onCreate(ev)
-      setForm({ title: '', start_date: '', venue: '', price: '', category: '', capacity: 100 })
-    } catch (err) { console.warn(err) }
+      setForm({title: '', start_date: '', venue: '', price: '', category: '', capacity: 100 })
+    } catch (err) {console.warn(err)}
   }
 
-  return (
-    <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 bg-white/5 rounded">
-      <input required value={form.title} onChange={e=>setForm({...form, title: e.target.value})} placeholder="Title" className="p-2 bg-transparent border rounded" />
-      <input required value={form.start_date} onChange={e=>setForm({...form, start_date: e.target.value})} type="date" className="p-2 bg-transparent border rounded" />
-      <input value={form.venue} onChange={e=>setForm({...form, venue: e.target.value})} placeholder="Venue/Location" className="p-2 bg-transparent border rounded" />
-      <input value={form.price} onChange={e=>setForm({...form, price: e.target.value})} placeholder="Price (e.g. $49 or Free)" className="p-2 bg-transparent border rounded" />
-      <select value={form.category} onChange={e=>setForm({...form, category: e.target.value})} className="p-2 bg-transparent border rounded">
-        <option value="" disabled>Select category</option>
-        {EVENT_CATEGORIES.map((category) => (
-          <option key={category} value={category}>{category}</option>
-        ))}
-      </select>
-      <input value={form.capacity} onChange={e=>setForm({...form, capacity: e.target.value})} placeholder="Capacity" className="p-2 bg-transparent border rounded" />
-      <div className="md:col-span-2 text-right">
-        <button className="px-4 py-2 bg-indigo-600 text-white rounded">Create Event</button>
-      </div>
-    </form>
-  )
+      return (
+      <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 bg-white/5 rounded">
+        <input required value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Title" className="p-2 bg-transparent border rounded" />
+        <input required value={form.start_date} onChange={e => setForm({ ...form, start_date: e.target.value })} type="date" className="p-2 bg-transparent border rounded" />
+        <input value={form.venue} onChange={e => setForm({ ...form, venue: e.target.value })} placeholder="Venue/Location" className="p-2 bg-transparent border rounded" />
+        <input value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} placeholder="Price (e.g. $49 or Free)" className="p-2 bg-transparent border rounded" />
+        <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="p-2 bg-transparent border rounded">
+          <option value="" disabled>Select category</option>
+          {EVENT_CATEGORIES.map((category) => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
+        <input value={form.capacity} onChange={e => setForm({ ...form, capacity: e.target.value })} placeholder="Capacity" className="p-2 bg-transparent border rounded" />
+        <div className="md:col-span-2 text-right">
+          <button className="px-4 py-2 bg-indigo-600 text-white rounded">Create Event</button>
+        </div>
+      </form>
+      )
 }

@@ -5,6 +5,16 @@ import AuthContext from '../context/AuthContext'
 import { notify } from '../utils/notify'
 import formatDate from '../utils/formatDate'
 
+
+await supabase
+  .from("bookings")
+  .insert([
+    {
+      user_id: user.id,
+      event_id: event.id
+    }
+  ]);
+  
 const EventDetails = () => {
   const { id } = useParams()
   const [event, setEvent] = useState(null)

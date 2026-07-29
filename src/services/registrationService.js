@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase'
 
+
 const REGISTRATIONS_KEY = 'eventhub_registrations'
 
 const normalizePrice = (value) => {
@@ -38,7 +39,21 @@ export const getRegistrationsFromServer = async (eventId) => {
 
     const { data, error } = await query
     if (error) throw error
-    return Array.isArray(data) ? data : []
+    return Array.isArray(data)
+    ? data.map(item => ({
+        ...item,
+        id: item.id,
+        name: item.attendee_name,
+        email: item.attendee_email,
+        phone: item.attendee_phone,
+        ticketId: item.ticket_id,
+        eventId: item.event_id,
+        ticketType: item.ticket_type,
+        checkedIn: item.checked_in,
+        createdAt: item.created_at,
+        status: item.status
+      }))
+    : []
   } catch (err) {
     console.warn('getRegistrationsFromServer', err)
     return []
@@ -104,3 +119,22 @@ export const saveRegistration = async (registration) => {
     return payload
   }
 }
+
+export const updateRegistration = async(id,updates)=>{
+
+  if(!supabase) return
+  
+  
+  const {data,error}=await supabase
+  .from("registrations")
+  .update(updates)
+  .eq("id",id)
+  .select()
+  .single()
+  
+  
+  if(error) throw error
+  
+  return data
+  
+  }

@@ -1,3 +1,4 @@
+-- Creates the database schema for event records used by the platform.
 -- Run this in your Supabase SQL editor to create the events table
 CREATE TABLE IF NOT EXISTS public.events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

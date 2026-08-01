@@ -1,3 +1,4 @@
+// Renders the dashboard notifications screen; persistent notification data is not yet implemented.
 import Sidebar from '../components/Sidebar'
 
 const Notifications = () => {

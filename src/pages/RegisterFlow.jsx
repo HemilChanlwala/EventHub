@@ -1,3 +1,4 @@
+// Runs event registration, Razorpay payment, confirmation, and ticket download for an attendee.
 import { useContext, useEffect, useRef, useState } from 'react'
 import { CalendarDays, Clock3, MapPin, User, Ticket as TicketIcon } from 'lucide-react'
 import { useParams, Link, useNavigate } from 'react-router-dom'

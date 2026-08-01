@@ -1,3 +1,4 @@
+// Listens for application notification events and displays temporary toast messages.
 import { useEffect, useState } from 'react'
 
 export default function Toaster() {

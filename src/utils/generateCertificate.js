@@ -1,3 +1,4 @@
+// Generates a downloadable participation certificate PDF for a registered attendee.
 import { jsPDF } from 'jspdf'
 import { formatDate } from './formatDate'
 

@@ -1,3 +1,4 @@
+// Handles creation of a new EventHub account with email/password or Google.
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext'

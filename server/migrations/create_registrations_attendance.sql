@@ -1,3 +1,4 @@
+-- Creates registration and attendance tables used for tickets and QR check-in.
 -- Run in Supabase SQL editor
 CREATE TABLE IF NOT EXISTS public.registrations (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

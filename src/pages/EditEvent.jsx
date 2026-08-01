@@ -1,3 +1,4 @@
+// Provides the current placeholder screen for editing a selected event ID.
 import { useParams } from "react-router-dom";
 
 const EditEvent = () => {

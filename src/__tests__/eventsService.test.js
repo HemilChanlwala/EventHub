@@ -1,3 +1,4 @@
+// Tests event-service data handling with a mocked Supabase database client.
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockFrom = vi.fn()

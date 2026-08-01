@@ -1,3 +1,4 @@
+// Converts row data to CSV and triggers a browser download for dashboard exports.
 export function exportCsv(filename = 'export.csv', rows = []) {
   if (!rows || !rows.length) return
   const headers = Object.keys(rows[0])

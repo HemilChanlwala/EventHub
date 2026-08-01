@@ -1,3 +1,4 @@
+// Formats event date values consistently for user-facing pages.
 export function formatDate(dateStr) {
   try {
     const date = new Date(dateStr)

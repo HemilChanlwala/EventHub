@@ -1,3 +1,4 @@
+// Creates the configured Supabase client and selects the preferred browser session storage.
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL

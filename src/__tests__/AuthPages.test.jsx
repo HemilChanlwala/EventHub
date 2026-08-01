@@ -1,3 +1,4 @@
+// Tests authentication pages and the authentication hook with mocked Supabase behaviour.
 import { cleanup, fireEvent, render, renderHook, screen, waitFor, act } from '@testing-library/react'
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'

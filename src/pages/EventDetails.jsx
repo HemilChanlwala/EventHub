@@ -1,3 +1,4 @@
+// Shows complete event information and organizer controls for an individual event.
 import { useEffect, useState, useContext } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getEvents, deleteEvent } from '../services'

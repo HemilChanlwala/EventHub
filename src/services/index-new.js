@@ -1,3 +1,4 @@
+// Contains an alternative combined service implementation with local-storage event and registration fallback support.
 import { supabase } from '../lib/supabase'
 
 const STORAGE_KEY = 'eventhub_events'

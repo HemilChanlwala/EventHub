@@ -1,3 +1,4 @@
+// Handles user login with email/password or Google and returns users to their intended page.
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext'

@@ -1,3 +1,4 @@
+// Gives organizers event-management statistics, registrations, exports, and event actions.
 import { useState, useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'

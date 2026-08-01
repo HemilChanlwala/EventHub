@@ -1,3 +1,4 @@
+// Provides responsive site navigation, theme controls, user actions, and role-aware links.
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
@@ -162,20 +163,16 @@ const Navbar = () => {
       initial={reducedMotion ? false : 'hidden'}
       animate="visible"
       variants={containerVariants}
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ease-in-out ${
-        scrolled
-          ? 'border-white/10 bg-[#0F172A]/88 shadow-[0_18px_44px_rgba(2,6,23,0.34),0_8px_26px_rgba(79,70,229,0.18)] backdrop-blur-xl'
-          : 'border-white/10 bg-[#111827]/96 shadow-[0_10px_26px_rgba(2,6,23,0.22)]'
-      }`}
+      className={`glass-nav ${scrolled ? 'scrolled' : ''}`}
       aria-label="Primary navigation"
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <motion.div variants={logoVariants} {...getMotionProps(reducedMotion)}>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-white transition-all duration-300 ease-in-out hover:text-[#C7D2FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+            className="inline-flex items-center gap-3 text-xl font-bold tracking-[-0.04em] text-[var(--text-strong)] transition-all duration-300 ease-in-out hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#4F46E5] text-sm font-bold text-white shadow-[0_10px_24px_rgba(79,70,229,0.36)]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#5B5FEF,#8B5CF6,#06B6D4)] text-sm font-bold text-white shadow-[0_18px_36px_rgba(91,95,239,0.35)]">
               EH
             </span>
             EventHub
@@ -199,7 +196,7 @@ const Navbar = () => {
                 type="button"
                 aria-label="Toggle theme"
                 onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-[#1E293B] hover:text-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[var(--text-strong)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-white/20 hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2"
                 {...getMotionProps(reducedMotion)}
               >
                 {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -212,7 +209,7 @@ const Navbar = () => {
               <Link
                 aria-label="Notifications"
                 to="/notifications"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-[#1E293B] hover:text-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[var(--text-strong)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-white/20 hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2"
               >
                 <Bell size={18} />
               </Link>
@@ -220,13 +217,13 @@ const Navbar = () => {
                 type="button"
                 aria-label="Toggle theme"
                 onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-[#1E293B] hover:text-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[var(--text-strong)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#818CF8]/70 hover:bg-white/20 hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2"
                 {...getMotionProps(reducedMotion)}
               >
                 {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               </motion.button>
               <div
-                className="flex max-w-48 items-center rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200"
+                className="flex max-w-48 items-center rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-[var(--text-strong)]"
                 title={`Hi, ${displayName}`}
               >
                 <span className="truncate">Hi, {displayName}</span>
@@ -234,7 +231,7 @@ const Navbar = () => {
               <motion.button
                 type="button"
                 onClick={handleLogout}
-                className="inline-flex h-10 items-center justify-center rounded-lg border border-[#6366F1]/70 bg-[#111827] px-4 text-sm font-semibold text-[#C7D2FE] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-[#4F46E5] hover:text-white hover:shadow-[0_12px_28px_rgba(79,70,229,0.28)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A]"
+                className="inline-flex h-10 items-center justify-center rounded-xl border border-[#5B5FEF]/60 bg-[linear-gradient(135deg,#5B5FEF,#8B5CF6)] px-4 text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.03] hover:shadow-[0_14px_30px_rgba(91,95,239,0.35)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2"
                 {...getMotionProps(reducedMotion)}
               >
                 Logout
@@ -246,7 +243,7 @@ const Navbar = () => {
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-[#818CF8]/70 hover:text-[#C7D2FE] hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0F172A] md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[var(--text-strong)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-[#818CF8]/70 hover:shadow-[0_12px_28px_rgba(79,70,229,0.22)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#818CF8] focus-visible:ring-offset-2 md:hidden"
           aria-label="Toggle menu"
           aria-expanded={open}
           aria-controls="mobile-navigation"

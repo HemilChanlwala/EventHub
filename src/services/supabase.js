@@ -1,3 +1,4 @@
+// Exposes a direct Supabase client for services that use environment credentials.
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL

@@ -1,3 +1,4 @@
+// Renders the dashboard settings screen; editable settings controls are planned for later.
 import Sidebar from '../components/Sidebar'
 
 const Settings = () => {

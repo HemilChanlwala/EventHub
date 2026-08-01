@@ -1,3 +1,4 @@
+// Displays the form used by organizers to create or update an event and upload its banner.
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 

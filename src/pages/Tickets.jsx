@@ -1,3 +1,4 @@
+// Lists all ticket registrations belonging to the currently signed-in attendee.
 import { useMemo } from 'react'
 import Sidebar from '../components/Sidebar'
 import { useContext } from 'react'

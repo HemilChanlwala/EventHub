@@ -1,3 +1,4 @@
+// Tests navbar links, responsive behaviour, and authentication-aware navigation.
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import Navbar from '../components/Navbar'

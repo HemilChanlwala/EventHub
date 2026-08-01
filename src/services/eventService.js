@@ -1,3 +1,4 @@
+// Reads, creates, updates, deletes, and normalizes event data through Supabase.
 import { supabase } from '../lib/supabase'
 
 const DEFAULT_COUNTRY = 'India'

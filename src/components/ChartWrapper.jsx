@@ -1,3 +1,4 @@
+// Registers Chart.js components and provides reusable line and bar chart views for dashboards.
 import {
   Chart as ChartJS,
   CategoryScale,

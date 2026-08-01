@@ -1,3 +1,4 @@
+// Generates ticket PDFs and calendar-invitation downloads for registered events.
 import { jsPDF } from 'jspdf'
 import { formatDate } from './formatDate'
 

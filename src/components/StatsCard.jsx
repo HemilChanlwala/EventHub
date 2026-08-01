@@ -1,8 +1,9 @@
+// Shows one labelled numerical statistic in dashboard summaries.
 const StatsCard = ({ title, value }) => {
   return (
-    <div className="rounded-lg border border-surface bg-surface p-7 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-soft">
-      <div className="text-4xl font-bold text-[#4F46E5]">{value}</div>
-      <div className="mt-2 text-sm font-medium text-slate-500 dark:text-slate-300">{title}</div>
+    <div className="glass-card p-7 text-center transition duration-300 hover:-translate-y-1">
+      <div className="text-4xl font-bold tracking-[-0.06em] text-[var(--primary)]">{value}</div>
+      <div className="mt-2 text-sm font-medium uppercase tracking-[0.12em] text-[var(--text-weak)]">{title}</div>
     </div>
   )
 }

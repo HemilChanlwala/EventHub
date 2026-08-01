@@ -1,3 +1,4 @@
+// Manages locally stored user profiles for profile editing and administrator features.
 export const getUsers = () => {
   try {
     return JSON.parse(localStorage.getItem('eventhub_users') || '[]')

@@ -1,3 +1,4 @@
+// Stores the current signed-in user in Redux, initially restored from local storage.
 import { createSlice } from '@reduxjs/toolkit'
 
 const loadUser = () => {

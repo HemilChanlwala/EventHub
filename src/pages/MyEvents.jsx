@@ -1,3 +1,4 @@
+// Lists an organizer's own events and provides navigation to create, edit, or delete them.
 import { useContext, useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import EventCard from '../components/EventCard'

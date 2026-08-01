@@ -1,3 +1,4 @@
+// Stores the event list in Redux and exposes actions to update it.
 import { createSlice } from '@reduxjs/toolkit'
 import { getEvents } from '../../services'
 

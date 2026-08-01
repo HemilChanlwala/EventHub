@@ -1,3 +1,4 @@
+-- Creates the database schema for Razorpay payment records.
 CREATE TABLE IF NOT EXISTS payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID,

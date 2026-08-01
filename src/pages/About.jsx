@@ -1,3 +1,4 @@
+// Renders the public About page for the EventHub platform.
 const About = () => (
   <div className="max-w-7xl mx-auto p-8">
     <h2 className="text-3xl font-semibold">About</h2>

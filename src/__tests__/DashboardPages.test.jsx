@@ -1,3 +1,4 @@
+// Tests that dashboard subpages render their main user interface correctly.
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'

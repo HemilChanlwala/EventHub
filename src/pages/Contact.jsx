@@ -1,3 +1,4 @@
+// Renders the public Contact and support information page.
 const Contact = () => (
   <div className="max-w-7xl mx-auto p-8">
     <h2 className="text-3xl font-semibold">Contact</h2>

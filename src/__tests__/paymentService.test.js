@@ -1,3 +1,4 @@
+// Tests Razorpay order and payment-verification requests without calling the real backend.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createRazorpayOrder, verifyRazorpayPayment } from '../services/paymentService'
 

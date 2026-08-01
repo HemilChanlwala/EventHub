@@ -1,4 +1,5 @@
-﻿export * from './authService'
+// Re-exports the application's service functions from one convenient import location.
+export * from './authService'
 export * from './eventService'
 export * from './registrationService'
 export * from './storageService'

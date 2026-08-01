@@ -1,3 +1,4 @@
+// Manages Supabase sign-in, sign-up, sign-out, user profile data, and session persistence.
 import { useEffect, useState } from "react";
 import { clearSessionStoragePreference, setSessionStoragePreference, supabase } from "../lib/supabase";
 

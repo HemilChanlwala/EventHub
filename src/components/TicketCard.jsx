@@ -1,3 +1,4 @@
+// Renders a registered-event ticket card and lets the attendee download it as a PDF.
 import { useRef } from 'react'
 import { downloadTicketPdf } from '../utils/downloadTicket'
 

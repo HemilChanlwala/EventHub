@@ -1,3 +1,4 @@
+// Provides administrator statistics, management actions, charts, and CSV export tools.
 import Sidebar from '../components/Sidebar'
 import StatsCard from '../components/StatsCard'
 import { SampleBar } from '../components/ChartWrapper'

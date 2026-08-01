@@ -1,3 +1,4 @@
+// Uploads event banner images to the Supabase Storage bucket.
 import { supabase } from '../lib/supabase'
 
 const BUCKET_NAME = 'event-banners'

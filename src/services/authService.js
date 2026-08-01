@@ -1,3 +1,4 @@
+// Provides Supabase authentication requests such as sign-up, sign-in, and password/session actions.
 import { supabase } from '../lib/supabase'
 
 export const createAuthUser = async (email, password) => {

@@ -1,3 +1,4 @@
+// Calls backend payment endpoints to create and verify Razorpay payment orders.
 const PAYMENT_CREATE_ORDER_URL = '/api/payment/create-order'
 const PAYMENT_VERIFY_URL = '/api/payment/verify'
 

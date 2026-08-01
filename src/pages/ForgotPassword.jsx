@@ -1,3 +1,4 @@
+// Renders the password-reset request form and its user feedback message.
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 

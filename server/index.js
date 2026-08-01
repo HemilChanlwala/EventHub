@@ -1,3 +1,4 @@
+// Implements Express endpoints for creating and verifying Razorpay payments.
 import 'dotenv/config'
 import crypto from 'crypto'
 import express from 'express'

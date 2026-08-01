@@ -1,3 +1,4 @@
+/* Shares authentication state and actions with the complete React component tree. */
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext } from 'react'
 import useAuth from '../hooks/useAuth'

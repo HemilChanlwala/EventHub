@@ -1,3 +1,4 @@
+// Displays the sidebar navigation used on dashboard-related pages.
 import { Link } from 'react-router-dom'
 
 const Sidebar = () => {

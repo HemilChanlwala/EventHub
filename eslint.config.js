@@ -1,3 +1,4 @@
+// Defines ESLint rules for consistent, safe JavaScript and React code.
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'

@@ -1,3 +1,4 @@
+// Displays a single ticket and provides certificate, PDF, calendar, and navigation actions.
 import { useParams, useNavigate } from 'react-router-dom'
 import { generateCertificate } from '../utils/generateCertificate'
 import { generateTicketPdf, downloadCalendarInvite } from '../utils/ticketUtils'
@@ -34,7 +35,6 @@ const Ticket = () => {
             <div className="text-sm">Type: {reg.ticketType}</div>
             <div className="text-sm">Price: {reg.price}</div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <button onClick={() => generateCertificate(reg)} className="px-4 py-2 bg-indigo-600 text-white rounded">Download Certificate</button>
               <button onClick={() => generateTicketPdf({
                 ...reg,
                 eventDate: reg.date || reg.eventDate,

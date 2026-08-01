@@ -1,3 +1,4 @@
+// Saves and retrieves attendee registrations using Supabase with a local-storage fallback.
 import { supabase } from '../lib/supabase'
 
 const REGISTRATIONS_KEY = 'eventhub_registrations'

@@ -1,3 +1,4 @@
+// Converts the visual ticket component into a downloadable PDF file.
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 

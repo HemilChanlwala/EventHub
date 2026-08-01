@@ -1,3 +1,4 @@
+// Lists events and provides search and category filtering for visitors.
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import EventCard from '../components/EventCard'

@@ -1,3 +1,4 @@
+// Defines the application's pages, routes, and access-controlled navigation.
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import ProtectedRoute from './routes/ProtectedRoute'
@@ -21,9 +22,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import CreateEvent from './pages/CreateEvent'
 import Notifications from './pages/Notifications'
 import Settings from './pages/Settings'
-import './App.css'
-import { useEffect } from "react";
-import { supabase } from "./lib/supabase";
+
 function App() {
   return (
     <Router>

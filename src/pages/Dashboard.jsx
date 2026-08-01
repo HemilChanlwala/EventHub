@@ -1,3 +1,4 @@
+// Displays the attendee dashboard with summary statistics, events, charts, and certificate actions.
 import Sidebar from '../components/Sidebar'
 import StatsCard from '../components/StatsCard'
 import { SampleLine } from '../components/ChartWrapper'
@@ -171,7 +172,6 @@ const Dashboard = () => {
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-2">
                       <a href={`/ticket/${r.ticketId}`} className="inline-flex min-h-10 items-center justify-center rounded-xl bg-surface-soft px-3 py-2 text-center text-sm font-medium text-theme transition hover:bg-white/10">View Ticket</a>
-                      <button onClick={() => { try { generateCertificate(r); notify('Certificate downloaded') } catch (err) { void err } }} className="inline-flex min-h-10 items-center justify-center rounded-xl bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white transition hover:bg-indigo-500">Download Certificate</button>
                       <button onClick={() => {
                         try {
                           const all = JSON.parse(localStorage.getItem('eventhub_registrations') || '[]')

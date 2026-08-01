@@ -1,3 +1,4 @@
+// Lets organizers check attendees in by scanning or entering a QR ticket code.
 import { useState, useRef, useEffect } from 'react'
 
 const CheckIn = () => {

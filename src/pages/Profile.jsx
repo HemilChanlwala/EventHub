@@ -1,3 +1,4 @@
+// Lets a signed-in user view and update their profile information.
 import { useContext, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 import { saveUser } from '../services'

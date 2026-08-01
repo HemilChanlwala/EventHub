@@ -1,3 +1,4 @@
+// Starts the React application and supplies authentication and Redux state to all pages.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

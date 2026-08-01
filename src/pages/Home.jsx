@@ -1,3 +1,4 @@
+// Builds the landing page with hero content, featured events, categories, and platform highlights.
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarDays, MapPin, Search, Sparkles, Ticket } from 'lucide-react'
@@ -103,56 +104,58 @@ const Home = () => {
   const highlight = featuredEvents[highlightIndex] || fallbackEvents[0]
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-12">
-      <section className="relative mb-12 min-h-[72vh] overflow-hidden rounded-2xl bg-slate-950 text-white">
-        <img src={heroImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-45" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.92),rgba(15,23,42,0.72),rgba(15,23,42,0.18))]" />
+    <div className="mx-auto max-w-7xl px-4 pb-16">
+      <section className="relative mb-12 overflow-hidden rounded-[32px] border border-white/15 bg-[radial-gradient(circle_at_top_left,rgba(91,95,239,0.36),transparent_30%),linear-gradient(135deg,rgba(15,23,42,0.96),rgba(17,24,39,0.82),rgba(30,41,59,0.68))] px-5 py-10 text-white shadow-[0_32px_90px_rgba(15,23,42,0.35)] md:px-10 lg:px-14">
+        <img src={heroImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.82),rgba(15,23,42,0.66),rgba(28,25,23,0.2))]" />
 
-        <div className="relative grid min-h-[72vh] grid-cols-1 items-center gap-8 px-5 py-10 md:grid-cols-[1.05fr_0.95fr] md:px-10 lg:px-14">
+        <div className="relative grid min-h-[72vh] grid-cols-1 items-center gap-8 md:grid-cols-[1.05fr_0.95fr]">
           <div className="max-w-2xl text-left">
-            <div className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white/90 backdrop-blur">
-              <Sparkles size={16} />
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white/90 backdrop-blur-md">
+              <Sparkles size={16} className="text-cyan-300" />
               Curated events for curious people
             </div>
-            <h1 className="mt-5 text-4xl font-bold leading-tight text-white md:text-6xl">Discover events worth showing up for</h1>
+            <h1 className="mt-6 max-w-xl text-white">Discover events worth showing up for</h1>
             <p className="mt-5 max-w-xl text-base leading-7 text-slate-200 md:text-lg">
               Find workshops, concerts, conferences, pitch nights, and local experiences with quick registration and clear tickets.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/events" className="btn btn-primary gap-2 rounded-lg">
+              <Link to="/events" className="btn btn-primary gap-2 rounded-2xl px-6 py-4 text-base font-semibold shadow-[0_18px_34px_rgba(91,95,239,0.32)]">
                 Explore Events
                 <ArrowRight size={18} />
               </Link>
               {isOrganizer && (
-                <Link to="/create-event" className="btn btn-secondary rounded-lg">Create Event</Link>
+                <Link to="/create-event" className="btn btn-primary gap-2 rounded-2xl px-6 py-4 text-base font-semibold shadow-[0_18px_34px_rgba(91,95,239,0.32)]">
+                  Create Event
+                </Link>
               )}
             </div>
             <div className="mt-8 grid max-w-xl grid-cols-3 gap-3">
               {stats.slice(0, 3).map((item) => (
-                <div key={item.label} className="rounded-lg border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
+                <div key={item.label} className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-[0_8px_30px_rgba(15,23,42,0.18)] backdrop-blur-md">
                   <div className="text-2xl font-bold text-white">{item.value}</div>
-                  <div className="text-xs uppercase tracking-wide text-slate-300">{item.label}</div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-slate-300">{item.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="hidden justify-end md:flex">
-            <div className="w-full max-w-md rounded-lg border border-white/15 bg-white/12 p-4 text-left shadow-2xl backdrop-blur-xl">
+            <div className="floaty w-full max-w-md rounded-[28px] border border-white/15 bg-white/10 p-4 text-left shadow-[0_30px_90px_rgba(15,23,42,0.28)] backdrop-blur-2xl">
               <div className="mb-4 flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm text-slate-300">Next highlight</p>
-                  <h2 className="mt-1 text-xl font-semibold text-white">{highlight.title}</h2>
+                  <h2 className="mt-1 text-2xl font-semibold text-white">{highlight.title}</h2>
                 </div>
-                <Ticket className="text-sky-300" size={28} />
+                <Ticket className="text-cyan-300" size={28} />
               </div>
-              <img src={highlight.image || heroImage} alt="" className="h-56 w-full rounded-lg object-cover" />
+              <img src={highlight.image || heroImage} alt="" className="h-56 w-full rounded-[20px] object-cover" />
               <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-slate-200">
-                <div className="flex items-center gap-2 rounded-lg bg-white/10 p-3">
+                <div className="flex items-center gap-2 rounded-2xl bg-white/10 p-3">
                   <CalendarDays size={16} />
                   {formatDate(highlight.date)}
                 </div>
-                <div className="flex items-center gap-2 rounded-lg bg-white/10 p-3">
+                <div className="flex items-center gap-2 rounded-2xl bg-white/10 p-3">
                   <MapPin size={16} />
                   {highlight.location || 'Online'}
                 </div>
@@ -165,7 +168,7 @@ const Home = () => {
                       type="button"
                       aria-label={`Show highlight ${index + 1}`}
                       onClick={() => setHighlightIndex(index)}
-                      className={`h-2.5 rounded-full transition-all ${index === highlightIndex ? 'w-7 bg-sky-300' : 'w-2.5 bg-white/35 hover:bg-white/60'}`}
+                      className={`h-2.5 rounded-full transition-all ${index === highlightIndex ? 'w-7 bg-cyan-300' : 'w-2.5 bg-white/35 hover:bg-white/60'}`}
                     />
                   ))}
                 </div>
@@ -179,10 +182,10 @@ const Home = () => {
       <section className="py-10 text-left">
         <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-500">Browse by interest</p>
-            <h2 className="text-3xl font-semibold">Categories</h2>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">Browse by interest</p>
+            <h2>Categories</h2>
           </div>
-          <Link to="/events" className="inline-flex items-center gap-2 text-sm font-semibold text-[#4F46E5]">
+          <Link to="/events" className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--primary)]">
             View all events
             <ArrowRight size={16} />
           </Link>
@@ -192,10 +195,10 @@ const Home = () => {
             <Link
               key={category}
               to={`/events?category=${encodeURIComponent(category)}`}
-              className="group flex items-center justify-between rounded-lg border border-surface bg-surface p-4 text-theme transition hover:-translate-y-1 hover:shadow-soft"
+              className="group flex items-center justify-between rounded-[20px] border border-white/15 bg-white/10 p-4 text-[var(--text-strong)] shadow-[0_12px_30px_rgba(15,23,42,0.04)] backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(91,95,239,0.14)]"
             >
               {category}
-              <Search size={16} className="text-theme-weak transition group-hover:text-[#4F46E5]" />
+              <Search size={16} className="text-[var(--text-weak)] transition group-hover:text-[var(--primary)]" />
             </Link>
           ))}
         </div>
@@ -203,8 +206,8 @@ const Home = () => {
 
       <section className="py-10 text-left">
         <div className="mb-6">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-500">Upcoming</p>
-          <h2 className="text-3xl font-semibold">Featured Events</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">Upcoming</p>
+          <h2>Featured Events</h2>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {featuredEvents.map((event) => (
@@ -231,21 +234,21 @@ const Home = () => {
       </section>
 
       <section className="py-10 text-left">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-500">Reviews</p>
-        <h2 className="mb-6 text-3xl font-semibold">What People Say</h2>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">Reviews</p>
+        <h2 className="mb-6">What People Say</h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="rounded-lg border border-surface bg-surface p-5 shadow-sm">
+            <div key={testimonial.id} className="glass-card p-5 text-left">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#4F46E5] text-sm font-semibold text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#5B5FEF,#8B5CF6,#06B6D4)] text-sm font-semibold text-white shadow-[0_12px_28px_rgba(91,95,239,0.28)]">
                   {testimonial.name.split(' ').map((part) => part[0]).slice(0, 2).join('')}
                 </div>
                 <div>
-                  <div className="font-semibold text-theme">{testimonial.name}</div>
+                  <div className="font-semibold text-[var(--text-strong)]">{testimonial.name}</div>
                   <div className="text-sm font-semibold text-amber-500">{`${testimonial.rating}.0 / 5`}</div>
                 </div>
               </div>
-              <p className="mt-3 text-sm text-theme-weak">{testimonial.review}</p>
+              <p className="mt-3 text-sm text-[var(--text-weak)]">{testimonial.review}</p>
             </div>
           ))}
         </div>

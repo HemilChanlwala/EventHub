@@ -111,6 +111,9 @@ const Home = () => {
 
         <div className="relative grid min-h-[72vh] grid-cols-1 items-center gap-8 md:grid-cols-[1.05fr_0.95fr]">
           <div className="max-w-2xl text-left">
+            <div className="mb-5 flex items-center justify-center sm:justify-start">
+              <img src="/favicon.svg" alt="EventHub logo" className="h-24 w-24 sm:h-28 sm:w-28" />
+            </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white/90 backdrop-blur-md">
               <Sparkles size={16} className="text-cyan-300" />
               Curated events for curious people
